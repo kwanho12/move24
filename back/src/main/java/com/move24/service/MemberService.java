@@ -8,6 +8,7 @@ import com.move24.repository.ImageRepository;
 import com.move24.repository.MemberRepository;
 import com.move24.request.JoinRequest;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,6 +18,7 @@ import java.time.LocalDateTime;
 
 import static com.move24.enums.Gender.*;
 
+@Slf4j
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -28,12 +30,13 @@ public class MemberService {
     @Value("${file.upload-dir}")
     private String uploadDir;
 
+    @Transactional
     public void join(JoinRequest request, MultipartFile file) {
+
         Image image = new Image(file);
         imageRepository.save(image);
 
         isValidGender(request.getGender());
-
         MemberDetails memberDetails = MemberDetails.builder()
                 .gender(valueOf(request.getGender()))
                 .name(request.getName())
@@ -48,6 +51,7 @@ public class MemberService {
                 .image(image)
                 .status(MemberStatus.ACTIVE)
                 .details(memberDetails)
+                .loginDate(LocalDateTime.now())
                 .createDate(LocalDateTime.now())
                 .updateDate(LocalDateTime.now())
                 .build();

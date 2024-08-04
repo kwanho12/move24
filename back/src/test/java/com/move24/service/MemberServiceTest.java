@@ -43,16 +43,14 @@ class MemberServiceTest {
                 "test file".getBytes()
         );
 
-        JoinRequest request = JoinRequest.builder()
-                .memberId("user1")
-                .password("1234")
-                .name("관호")
-                .gender("MALE")
-                .mail("sksmss123@gmail.com")
-                .phoneNumber("01012345678")
-                .address("서울시 양산길 33")
-                .status("active")
-                .build();
+        JoinRequest request = new JoinRequest();
+        request.setMemberId("user1");
+        request.setPassword("1234");
+        request.setName("관호");
+        request.setGender("MALE");
+        request.setMail("sksmss123@gmail.com");
+        request.setPhoneNumber("01012345678");
+        request.setAddress("서울시 양산길 33");
 
         // when
         memberService.join(request, file);

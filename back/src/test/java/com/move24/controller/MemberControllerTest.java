@@ -9,6 +9,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.transaction.annotation.Transactional;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
@@ -17,6 +18,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
+@Transactional
 class MemberControllerTest {
 
     @Autowired
@@ -27,16 +29,14 @@ class MemberControllerTest {
 
     @Test
     void joinTest() throws Exception {
-        JoinRequest request = JoinRequest.builder()
-                .memberId("user1")
-                .password("1234")
-                .name("관호")
-                .gender("MALE")
-                .mail("sksmss123@gmail.com")
-                .phoneNumber("01012345678")
-                .address("서울시 양산길 33")
-                .status("active")
-                .build();
+        JoinRequest request = new JoinRequest();
+        request.setMemberId("user1");
+        request.setPassword("1234");
+        request.setName("관호");
+        request.setGender("MALE");
+        request.setMail("sksmss123@gmail.com");
+        request.setPhoneNumber("01012345678");
+        request.setAddress("서울시 양산길 33");
 
         String json = objectMapper.writeValueAsString(request);
 
@@ -57,7 +57,7 @@ class MemberControllerTest {
         );
 
         // expected
-        mockMvc.perform(multipart("/join")
+        mockMvc.perform(multipart("/api/join")
                         .file(jsonRequest)
                         .file(file)
                         .contentType(MediaType.MULTIPART_FORM_DATA)

@@ -1,21 +1,23 @@
 package com.move24.domain;
 
 import com.move24.enums.Extension;
-import com.move24.exception.ExtensionNotMatch;
 import com.move24.exception.FileNameNotValid;
 import com.move24.exception.ImageNotSave;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
+
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 import static com.move24.enums.Extension.*;
 
+@Slf4j
 @Entity
 @Getter
 @NoArgsConstructor(force = true)
@@ -33,6 +35,7 @@ public class Image extends DateEntity {
 
     public Image(MultipartFile file) {
 
+        super(LocalDateTime.now(), LocalDateTime.now());
         this.originalName = file.getOriginalFilename();
 
         if (this.originalName == null || !this.originalName.contains(".")) {
@@ -51,6 +54,7 @@ public class Image extends DateEntity {
     public void upload(MultipartFile file, String fileName, String uploadDir) {
         // 파일 저장
         String filePath = uploadDir + "/" + fileName;
+        log.debug("============= 파일경로: " + filePath);
         try {
             file.transferTo(new File(filePath));
         } catch (IOException e) {
