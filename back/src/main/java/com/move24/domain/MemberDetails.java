@@ -1,6 +1,7 @@
 package com.move24.domain;
 
 import com.move24.enums.Gender;
+import com.move24.enums.Role;
 import jakarta.persistence.Embeddable;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -20,5 +21,8 @@ public class MemberDetails {
     private String mail;
     private String phoneNumber;
     private String address;
+
+    @Enumerated(EnumType.STRING)
+    private Role role;
 
 }

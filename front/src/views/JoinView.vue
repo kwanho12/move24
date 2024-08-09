@@ -10,14 +10,40 @@ const gender = ref("");
 const email = ref("");
 const address = ref("");
 const phoneNumber = ref("");
+const role = ref("");
 const file = ref(null);
+const idCheckMessage = ref("");
+const isIdAvailable = ref(false);
 const router = useRouter(); 
 
 const onFileChange = (event) => {
   file.value = event.target.files[0];
 };
 
+const checkId = async () => {
+  try {
+    const response = await axios.post("/api/check-id", { memberId: memberId.value });
+
+    if (!response.data) {
+      idCheckMessage.value = "사용 가능한 아이디입니다.";
+      isIdAvailable.value = true;
+    } else {
+      idCheckMessage.value = "이미 사용 중인 아이디입니다.";
+      isIdAvailable.value = false;
+    }
+  } catch (error) {
+    console.log('아이디 중복 확인 오류: ', error.response ? error.response.data : error.message);
+    idCheckMessage.value = "아이디 확인 중 오류가 발생했습니다.";
+    isIdAvailable.value = false;
+  }
+};
+
 const register = async () => {
+  if (!isIdAvailable.value) {
+    alert("아이디 중복 확인을 해주세요.");
+    return;
+  }
+
   const requestData = {
     memberId: memberId.value,
     password: password.value,
@@ -26,6 +52,7 @@ const register = async () => {
     mail: email.value,
     address: address.value,
     phoneNumber: phoneNumber.value,
+    role: role.value,
   };
 
   const formData = new FormData();
@@ -62,21 +89,25 @@ const register = async () => {
           <h4 class="mb-3" style="color: #b40431">Move24</h4>
           <form @submit.prevent="register" novalidate>
             <div class="row g-3">
-              <div class="col-12">
+              <div class="col-sm-10">
                 <input
                   type="text"
                   class="form-control"
-                  id="memberId"
                   placeholder="아이디"
                   v-model="memberId"
                   required
                 />
               </div>
+              <div class="col-sm-2">
+                <button type="button" class="btn btn-danger" @click="checkId">중복 확인</button>
+              </div>
+              <div class="col-12" v-if="idCheckMessage">
+                <p>{{ idCheckMessage }}</p>
+              </div>
               <div class="col-12">
                 <input
                   type="password"
                   class="form-control"
-                  id="password"
                   placeholder="비밀번호"
                   v-model="password"
                   required
@@ -86,7 +117,6 @@ const register = async () => {
                 <input
                   type="text"
                   class="form-control"
-                  id="name"
                   v-model="name"
                   placeholder="이름"
                   required
@@ -95,7 +125,6 @@ const register = async () => {
               <div class="col-sm-6">
                 <select
                   class="form-select"
-                  id="gender"
                   v-model="gender"
                   required
                 >
@@ -109,7 +138,6 @@ const register = async () => {
                 <input
                   type="email"
                   class="form-control"
-                  id="email"
                   v-model="email"
                   placeholder="이메일"
                 />
@@ -119,7 +147,6 @@ const register = async () => {
                 <input
                   type="text"
                   class="form-control"
-                  id="address"
                   v-model="address"
                   placeholder="주소"
                   required
@@ -130,20 +157,30 @@ const register = async () => {
                 <input
                   type="text"
                   class="form-control"
-                  id="addressDetail"
                   placeholder="주소 상세"
                   required
                 />
               </div>
 
-              <div class="col-12">
+              <div class="col-sm-6">
                 <input
                   type="text"
                   class="form-control"
-                  id="phoneNumber"
                   v-model="phoneNumber"
                   placeholder="휴대폰 번호"
                 />
+              </div>
+
+              <div class="col-sm-6">
+                <select
+                  class="form-select"
+                  v-model="role"
+                  required
+                >
+                  <option value="">ROLE</option>
+                  <option value="ROLE_USER">사용자</option>
+                  <option value="ROLE_DRIVER">기사</option>
+                </select>
               </div>
 
               <div class="col-12">
@@ -151,7 +188,6 @@ const register = async () => {
                 <input
                   type="file"
                   class="form-control"
-                  id="image"
                   placeholder="이미지"
                   @change="onFileChange"
                 />

@@ -1,9 +1,8 @@
 package com.move24.service;
 
-import com.move24.domain.Image;
-import com.move24.domain.Member;
-import com.move24.domain.MemberDetails;
+import com.move24.domain.*;
 import com.move24.enums.MemberStatus;
+import com.move24.enums.Role;
 import com.move24.repository.ImageRepository;
 import com.move24.repository.MemberRepository;
 import com.move24.request.JoinRequest;
@@ -43,6 +42,7 @@ public class MemberService {
                 .mail(request.getMail())
                 .phoneNumber(request.getPhoneNumber())
                 .address(request.getAddress())
+                .role(Role.valueOf(request.getRole()))
                 .build();
 
         Member member = Member.builder()
@@ -57,6 +57,11 @@ public class MemberService {
                 .build();
 
         memberRepository.save(member);
+
         image.upload(file, image.getFileName(), uploadDir);
+    }
+
+    public boolean isExist(String memberId) {
+        return memberRepository.existsById(memberId);
     }
 }
