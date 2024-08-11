@@ -2,12 +2,16 @@ package com.move24.domain;
 
 import com.move24.enums.OrderStatus;
 import jakarta.persistence.*;
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "orders")
 public class Order extends DateEntity {
 
@@ -30,5 +34,6 @@ public class Order extends DateEntity {
     private String arrivalAddress;
     private LocalDate expectedDate;
     private String content;
+
 
 }

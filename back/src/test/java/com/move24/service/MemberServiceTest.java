@@ -2,71 +2,113 @@ package com.move24.service;
 
 import com.move24.domain.Image;
 import com.move24.domain.Member;
-import com.move24.enums.Gender;
+import com.move24.exception.exception.IdAlreadyExistsException;
 import com.move24.repository.ImageRepository;
 import com.move24.repository.MemberRepository;
 import com.move24.request.JoinRequest;
-
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.*;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.MediaType;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mock.web.MockMultipartFile;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.*;
+import static org.springframework.http.MediaType.IMAGE_JPEG_VALUE;
 
-@SpringBootTest
-@Transactional
-class MemberServiceTest {
+@ExtendWith(MockitoExtension.class)
+public class MemberServiceTest {
 
-    @Autowired
-    private ImageRepository imageRepository;
+    @Mock
+    private MemberRepository mockMemberRepository;
 
-    @Autowired
-    private MemberRepository memberRepository;
+    @Mock
+    private ImageRepository mockImageRepository;
 
-    @Autowired
-    private MemberService memberService;
+    @InjectMocks
+    private MemberService mockMemberService;
+
+    @Captor
+    ArgumentCaptor<Image> imageCaptor;
+
+    @Captor
+    ArgumentCaptor<Member> memberCaptor;
+
+    @BeforeEach
+    void setUp() {
+        ReflectionTestUtils.setField(mockMemberService, "uploadDir", "/Users/jkh/git/move24/upload/staff");
+    }
 
     @Test
-    void joinTest() {
+    @DisplayName("회원가입에 성공한다.")
+    void successSignup() {
 
-        // given
-        MockMultipartFile file = new MockMultipartFile(
+        MockMultipartFile mockFile = new MockMultipartFile(
                 "file",
                 "testFile.jpeg",
-                MediaType.IMAGE_JPEG_VALUE,
+                IMAGE_JPEG_VALUE,
                 "test file".getBytes()
         );
 
-        JoinRequest request = new JoinRequest();
-        request.setMemberId("user1");
-        request.setPassword("1234");
-        request.setName("관호");
-        request.setGender("MALE");
-        request.setMail("sksmss123@gmail.com");
-        request.setPhoneNumber("01012345678");
-        request.setAddress("서울시 양산길 33");
+        JoinRequest request = JoinRequest.builder()
+                .memberId("skdltm12")
+                .password("good12#")
+                .name("길동")
+                .gender("MALE")
+                .mail("skdltm12@gmail.com")
+                .address("서울시 양산길 12")
+                .phoneNumber("010-1234-5678")
+                .role("ROLE_USER")
+                .build();
 
         // when
-        memberService.join(request, file);
-        Member savedMember = memberRepository.findById(request.getMemberId()).orElse(null);
-        Image savedImage = savedMember != null ? imageRepository.findById(savedMember.getImage().getId()).orElse(null) : null;
+        mockMemberService.signup(request, mockFile);
 
         // then
-        assertNotNull(savedMember);
-        assertNotNull(savedImage);
+        verify(mockImageRepository, times(1)).save(imageCaptor.capture());
+        verify(mockMemberRepository, times(1)).save(memberCaptor.capture());
 
+        Image savedImage = imageCaptor.getValue();
+        assertEquals("testFile.jpeg", savedImage.getOriginalName());
+
+        Member savedMember = memberCaptor.getValue();
         assertEquals(request.getMemberId(), savedMember.getId());
-        assertEquals(request.getName(), savedMember.getDetails().getName());
-        assertEquals(request.getMail(), savedMember.getDetails().getMail());
-        assertEquals(request.getPhoneNumber(), savedMember.getDetails().getPhoneNumber());
-        assertEquals(request.getAddress(), savedMember.getDetails().getAddress());
-        assertEquals(Gender.valueOf(request.getGender()), savedMember.getDetails().getGender());
-        assertEquals(savedMember.getImage().getFileName(), savedImage.getFileName());
+        assertEquals(request.getPassword(), savedMember.getPassword());
+        assertEquals(savedImage, savedMember.getImage());
+
+    }
+
+    @Test
+    @DisplayName("회원가입시 아이디 중복 검사(이미 존재하는 아이디)")
+    void idAlreadyExists() {
+        // given
+        String memberId = "existingId";
+        when(mockMemberRepository.existsById(memberId)).thenReturn(true);
+
+        // when
+        assertThrows(IdAlreadyExistsException.class, () -> mockMemberService.checkId(memberId));
+
+        // then
+        verify(mockMemberRepository).existsById(memberId);
+    }
+
+    @Test
+    @DisplayName("회원가입시 아이디 중복 검사(사용 가능한 아이디)")
+    void idNotExists() {
+        // given
+        String memberId = "newId";
+        when(mockMemberRepository.existsById(memberId)).thenReturn(false);
+
+        // when
+        mockMemberService.checkId(memberId);
+
+        // then
+        verify(mockMemberRepository).existsById(memberId);
     }
 }

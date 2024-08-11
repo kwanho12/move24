@@ -1,10 +1,11 @@
 package com.move24.request;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
-@Setter
+@Builder
 public class CheckIdRequest {
     String memberId;
 }

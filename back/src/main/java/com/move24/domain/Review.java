@@ -2,10 +2,13 @@ package com.move24.domain;
 
 import com.move24.enums.ReviewStatus;
 import jakarta.persistence.*;
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Review extends DateEntity {
 
     @Id @GeneratedValue

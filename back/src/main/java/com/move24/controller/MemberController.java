@@ -17,15 +17,14 @@ public class MemberController {
 
     private final MemberService memberService;
 
-    @PostMapping("/api/join")
+    @PostMapping("/api/signup")
     public void join(@RequestPart(name = "request") @Validated JoinRequest request,
                      @RequestPart(name = "file") MultipartFile file) {
-        memberService.join(request, file);
+        memberService.signup(request, file);
     }
 
-    @PostMapping("/api/check-id")
-    public boolean idCheck(@RequestBody CheckIdRequest request) {
-        String memberId = request.getMemberId();
-        return memberService.isExist(memberId);
+    @PostMapping("/api/signup/check-id")
+    public void IDDuplicateCheck(@RequestBody CheckIdRequest request) {
+        memberService.checkId(request.getMemberId());
     }
 }

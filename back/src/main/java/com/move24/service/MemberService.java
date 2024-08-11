@@ -3,6 +3,7 @@ package com.move24.service;
 import com.move24.domain.*;
 import com.move24.enums.MemberStatus;
 import com.move24.enums.Role;
+import com.move24.exception.exception.IdAlreadyExistsException;
 import com.move24.repository.ImageRepository;
 import com.move24.repository.MemberRepository;
 import com.move24.request.JoinRequest;
@@ -30,7 +31,7 @@ public class MemberService {
     private String uploadDir;
 
     @Transactional
-    public void join(JoinRequest request, MultipartFile file) {
+    public void signup(JoinRequest request, MultipartFile file) {
 
         Image image = new Image(file);
         imageRepository.save(image);
@@ -57,11 +58,13 @@ public class MemberService {
                 .build();
 
         memberRepository.save(member);
-
         image.upload(file, image.getFileName(), uploadDir);
     }
 
-    public boolean isExist(String memberId) {
-        return memberRepository.existsById(memberId);
+    public void checkId(String memberId) {
+        boolean isExist = memberRepository.existsById(memberId);
+        if(isExist) {
+            throw new IdAlreadyExistsException("이미 존재하는 아이디입니다.");
+        }
     }
 }

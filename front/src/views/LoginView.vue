@@ -17,7 +17,7 @@ import { RouterLink } from 'vue-router';
         <label for="floatingPassword">비밀번호</label>
       </div>
       <button class="btn btn-outline-danger w-100 py-2" type="submit">로그인</button>
-      <RouterLink to="/join">
+      <RouterLink to="/signup">
         <button type="button" class="btn btn-danger w-100 py-2 mt-2">회원 가입</button>
       </RouterLink>
     </form>

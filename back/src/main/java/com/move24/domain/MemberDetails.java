@@ -8,10 +8,10 @@ import jakarta.persistence.Enumerated;
 import lombok.*;
 
 @Embeddable
-@Builder
 @Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Builder
 @AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class MemberDetails {
 
     @Enumerated(EnumType.STRING)

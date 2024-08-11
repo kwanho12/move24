@@ -1,10 +1,11 @@
 package com.move24.domain;
 
 import com.move24.enums.Extension;
-import com.move24.exception.FileNameNotValid;
-import com.move24.exception.ImageNotSave;
+import com.move24.exception.exception.FileNameNotValidException;
+import com.move24.exception.exception.ImageNotSaveException;
 import jakarta.persistence.*;
 
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,7 +21,7 @@ import static com.move24.enums.Extension.*;
 @Slf4j
 @Entity
 @Getter
-@NoArgsConstructor(force = true)
+@NoArgsConstructor(force = true, access = AccessLevel.PROTECTED)
 public class Image extends DateEntity {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -37,9 +38,8 @@ public class Image extends DateEntity {
 
         super(LocalDateTime.now(), LocalDateTime.now());
         this.originalName = file.getOriginalFilename();
-
         if (this.originalName == null || !this.originalName.contains(".")) {
-            throw new FileNameNotValid("유효하지 않은 파일 이름입니다.");
+            throw new FileNameNotValidException("유효하지 않은 파일 이름입니다.");
         }
 
         String extension = originalName.substring(originalName.lastIndexOf(".") + 1);
@@ -54,11 +54,10 @@ public class Image extends DateEntity {
     public void upload(MultipartFile file, String fileName, String uploadDir) {
         // 파일 저장
         String filePath = uploadDir + "/" + fileName;
-        log.debug("============= 파일경로: " + filePath);
         try {
             file.transferTo(new File(filePath));
         } catch (IOException e) {
-            throw new ImageNotSave("이미지 저장을 실패하였습니다.");
+            throw new ImageNotSaveException("이미지 저장을 실패하였습니다.");
         }
     }
 }

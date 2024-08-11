@@ -1,6 +1,6 @@
 package com.move24.enums;
 
-import com.move24.exception.ExtensionNotMatch;
+import com.move24.exception.exception.ExtensionNotMatchException;
 
 import java.util.Arrays;
 
@@ -11,7 +11,7 @@ public enum Extension {
         boolean isValid = Arrays.stream(Extension.values())
                 .anyMatch(value -> value.name().equalsIgnoreCase(extension));
         if (!isValid) {
-            throw new ExtensionNotMatch(extension.substring(1) + "은(는) 이미지 확장자가 아닙니다.");
+            throw new ExtensionNotMatchException(extension.substring(1) + "은(는) 이미지 확장자가 아닙니다.");
         }
     }
 }

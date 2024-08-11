@@ -22,13 +22,13 @@ const onFileChange = (event) => {
 
 const checkId = async () => {
   try {
-    const response = await axios.post("/api/check-id", { memberId: memberId.value });
+    const response = await axios.post("/api/signup/check-id", { memberId: memberId.value });
 
     if (!response.data) {
       idCheckMessage.value = "사용 가능한 아이디입니다.";
       isIdAvailable.value = true;
     } else {
-      idCheckMessage.value = "이미 사용 중인 아이디입니다.";
+      idCheckMessage.value = "이미 사용 중인 아이디입니다. 다른 아이디를 입력해주세요.";
       isIdAvailable.value = false;
     }
   } catch (error) {
@@ -65,7 +65,7 @@ const register = async () => {
   );
 
   try {
-    const response = await axios.post("/api/join", formData, {
+    const response = await axios.post("/api/signup", formData, {
       headers: {
         "Content-Type": "multipart/form-data",
       },

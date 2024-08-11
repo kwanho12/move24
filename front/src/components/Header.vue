@@ -15,7 +15,9 @@ import { RouterLink } from 'vue-router';
                 <RouterLink to="/home">
                     <li><a href="#" class="nav-link px-2">Home</a></li>
                 </RouterLink>
-                <li><a href="#" class="nav-link px-2">기사</a></li>
+                <RouterLink to="/drivers">
+                    <li><a href="#" class="nav-link px-2">기사</a></li>
+                </RouterLink>
                 <li><a href="#" class="nav-link px-2">후기</a></li>
             </ul>
 
@@ -23,7 +25,7 @@ import { RouterLink } from 'vue-router';
                 <RouterLink to="/login">
                     <button type="button" class="btn btn-outline-danger me-2">로그인</button>
                 </RouterLink>
-                <RouterLink to="/join">
+                <RouterLink to="/signup">
                     <button type="button" class="btn btn-danger">회원가입</button>
                 </RouterLink>
             </div>

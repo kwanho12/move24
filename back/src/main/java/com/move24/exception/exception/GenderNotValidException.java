@@ -1,4 +1,4 @@
-package com.move24.exception;
+package com.move24.exception.exception;
 
 import lombok.NoArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -6,8 +6,8 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 
 @NoArgsConstructor
 @ResponseStatus(HttpStatus.BAD_REQUEST)
-public class GenderNotValid extends RuntimeException {
-    public GenderNotValid(String message) {
+public class GenderNotValidException extends RuntimeException {
+    public GenderNotValidException(String message) {
         super(message);
     }
 }
