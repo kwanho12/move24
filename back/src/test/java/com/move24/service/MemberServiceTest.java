@@ -26,13 +26,13 @@ import static org.springframework.http.MediaType.IMAGE_JPEG_VALUE;
 public class MemberServiceTest {
 
     @Mock
-    private MemberRepository mockMemberRepository;
+    private MemberRepository memberRepository;
 
     @Mock
-    private ImageRepository mockImageRepository;
+    private ImageRepository imageRepository;
 
     @InjectMocks
-    private MemberService mockMemberService;
+    private MemberService memberService;
 
     @Captor
     ArgumentCaptor<Image> imageCaptor;
@@ -42,7 +42,7 @@ public class MemberServiceTest {
 
     @BeforeEach
     void setUp() {
-        ReflectionTestUtils.setField(mockMemberService, "uploadDir", "/Users/jkh/git/move24/upload/staff");
+        ReflectionTestUtils.setField(memberService, "uploadDir", "/Users/jkh/git/move24/upload/staff");
     }
 
     @Test
@@ -68,11 +68,11 @@ public class MemberServiceTest {
                 .build();
 
         // when
-        mockMemberService.signup(request, mockFile);
+        memberService.signup(request, mockFile);
 
         // then
-        verify(mockImageRepository, times(1)).save(imageCaptor.capture());
-        verify(mockMemberRepository, times(1)).save(memberCaptor.capture());
+        verify(imageRepository, times(1)).save(imageCaptor.capture());
+        verify(memberRepository, times(1)).save(memberCaptor.capture());
 
         Image savedImage = imageCaptor.getValue();
         assertEquals("testFile.jpeg", savedImage.getOriginalName());
@@ -89,13 +89,13 @@ public class MemberServiceTest {
     void idAlreadyExists() {
         // given
         String memberId = "existingId";
-        when(mockMemberRepository.existsById(memberId)).thenReturn(true);
+        when(memberRepository.existsById(memberId)).thenReturn(true);
 
         // when
-        assertThrows(IdAlreadyExistsException.class, () -> mockMemberService.checkId(memberId));
+        assertThrows(IdAlreadyExistsException.class, () -> memberService.checkId(memberId));
 
         // then
-        verify(mockMemberRepository).existsById(memberId);
+        verify(memberRepository).existsById(memberId);
     }
 
     @Test
@@ -103,13 +103,13 @@ public class MemberServiceTest {
     void idNotExists() {
         // given
         String memberId = "newId";
-        when(mockMemberRepository.existsById(memberId)).thenReturn(false);
+        when(memberRepository.existsById(memberId)).thenReturn(false);
 
         // when
-        mockMemberService.checkId(memberId);
+        memberService.checkId(memberId);
 
         // then
-        verify(mockMemberRepository).existsById(memberId);
+        verify(memberRepository).existsById(memberId);
     }
 
 }

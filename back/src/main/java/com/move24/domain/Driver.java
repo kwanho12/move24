@@ -1,8 +1,6 @@
 package com.move24.domain;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,9 +12,13 @@ import lombok.experimental.SuperBuilder;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Driver extends DateEntity {
 
-    @Id
-    @Column(name = "driver_id")
-    private String id;
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "post_driver_id")
+    private Long id;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "driver_id")
+    private Member member;
 
     private int experienceYear;
 

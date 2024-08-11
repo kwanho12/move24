@@ -30,8 +30,8 @@ public class GlobalExceptionHandler {
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(IdAlreadyExistsException.class)
-    public ErrorResponse IdAlreadyExistsExceptionHandler(IdAlreadyExistsException e) {
+    @ExceptionHandler(RuntimeException.class)
+    public ErrorResponse runtimeExceptionHandler(RuntimeException e) {
         return ErrorResponse.builder()
                 .code("400")
                 .message(e.getMessage())

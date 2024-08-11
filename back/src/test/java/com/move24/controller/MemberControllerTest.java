@@ -86,6 +86,7 @@ class MemberControllerTest {
         Member member = memberRepository.findById(memberId).orElse(null);
 
         // then
+        assertEquals(1L, memberRepository.count());
         assertEquals(request.getMemberId(), Objects.requireNonNull(member).getId());
         assertEquals(request.getPassword(), member.getPassword());
         assertEquals(request.getName(), member.getDetails().getName());
