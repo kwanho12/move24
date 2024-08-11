@@ -5,7 +5,7 @@ import lombok.Getter;
 
 @Getter
 @Builder
-public class DriverRequest {
+public class DriverPostRequest {
 
     private String driverId;
     private int experienceYear;

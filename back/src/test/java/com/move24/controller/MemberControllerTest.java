@@ -5,7 +5,6 @@ import com.move24.domain.Member;
 import com.move24.enums.Gender;
 import com.move24.enums.Role;
 import com.move24.repository.MemberRepository;
-import com.move24.request.CheckIdRequest;
 import com.move24.request.JoinRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -42,7 +41,7 @@ class MemberControllerTest {
 
     @Test
     @DisplayName("회원가입시 DB에 데이터가 저장된다.")
-    void join() throws Exception {
+    void successSignup() throws Exception {
 
         String memberId = "skdltm12";
 
@@ -99,7 +98,7 @@ class MemberControllerTest {
 
     @Test
     @DisplayName("아이디를 입력하지 않으면 오류가 발생한다.")
-    void joinTest2() throws Exception {
+    void unSuccessSignup() throws Exception {
 
         String email = "sksmss123@gmail.com";
 
@@ -141,15 +140,5 @@ class MemberControllerTest {
                 .andExpect(jsonPath("$.message").value("잘못된 요청입니다."))
                 .andExpect(jsonPath("$.validation.memberId").value("아이디는 필수로 입력해야 합니다."))
                 .andDo(print());
-    }
-
-    @Test
-    @DisplayName("id 중복검사")
-    void idCheck() {
-        CheckIdRequest request = CheckIdRequest.builder()
-                .memberId("skdltm12")
-                .build();
-
-
     }
 }

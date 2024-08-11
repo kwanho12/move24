@@ -20,7 +20,7 @@ public class GlobalExceptionHandler {
     public ValidationErrorResponse MethodArgumentNotValidExceptionHandler(MethodArgumentNotValidException e) {
         ValidationErrorResponse response = ValidationErrorResponse.builder()
                 .code("400")
-                .message("잘못된 요청입니다.")
+                .message("검증 오류입니다.")
                 .build();
 
         for (FieldError fieldError : e.getFieldErrors()) {

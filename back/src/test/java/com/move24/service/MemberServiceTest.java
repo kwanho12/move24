@@ -111,4 +111,5 @@ public class MemberServiceTest {
         // then
         verify(mockMemberRepository).existsById(memberId);
     }
+
 }
