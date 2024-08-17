@@ -25,6 +25,6 @@ public class MemberController {
 
     @PostMapping("/api/signup/check-id")
     public void IDDuplicateCheck(@RequestBody CheckIdRequest request) {
-        memberService.checkId(request.getMemberId());
+        memberService.validateDuplicateId(request.getMemberId());
     }
 }

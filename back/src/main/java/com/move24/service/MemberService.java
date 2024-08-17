@@ -7,14 +7,17 @@ import com.move24.exception.exception.IdAlreadyExistsException;
 import com.move24.repository.ImageRepository;
 import com.move24.repository.MemberRepository;
 import com.move24.request.JoinRequest;
+import com.move24.response.DriversResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 import static com.move24.enums.Gender.*;
 
@@ -33,10 +36,14 @@ public class MemberService {
     @Transactional
     public void signup(JoinRequest request, MultipartFile file) {
 
+        boolean isExist = memberRepository.existsByUserId(request.getUserId());
+        if(isExist) {
+            throw new IdAlreadyExistsException("이미 존재하는 아이디입니다.");
+        }
+
         Image image = new Image(file);
         imageRepository.save(image);
 
-        isValidGender(request.getGender());
         MemberDetails memberDetails = MemberDetails.builder()
                 .gender(valueOf(request.getGender()))
                 .name(request.getName())
@@ -47,7 +54,7 @@ public class MemberService {
                 .build();
 
         Member member = Member.builder()
-                .id(request.getMemberId())
+                .userId(request.getUserId())
                 .password(request.getPassword())
                 .image(image)
                 .status(MemberStatus.ACTIVE)
@@ -60,11 +67,12 @@ public class MemberService {
         memberRepository.save(member);
         image.upload(file, image.getFileName(), uploadDir);
     }
-
-    public void checkId(String memberId) {
-        boolean isExist = memberRepository.existsById(memberId);
+    
+    public void validateDuplicateId(String userId) {
+        boolean isExist = memberRepository.existsByUserId(userId);
         if(isExist) {
             throw new IdAlreadyExistsException("이미 존재하는 아이디입니다.");
         }
     }
+
 }

@@ -16,6 +16,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
 
+import java.nio.file.Files;
 import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -42,12 +43,10 @@ class MemberControllerTest {
     @Test
     @DisplayName("회원가입시 DB에 데이터가 저장된다.")
     void successSignup() throws Exception {
-
-        String memberId = "skdltm12";
-
         // given
+        String userId = "skdltm12";
         JoinRequest request = JoinRequest.builder()
-                .memberId(memberId)
+                .userId(userId)
                 .password("jinkwanho12#")
                 .name("관호")
                 .gender("MALE")
@@ -66,28 +65,27 @@ class MemberControllerTest {
                 json.getBytes()
         );
 
-        MockMultipartFile file = new MockMultipartFile(
+        MockMultipartFile fileRequest = new MockMultipartFile(
                 "file",
                 "testFile.jpeg",
                 IMAGE_JPEG_VALUE,
                 "test file".getBytes()
         );
 
-        // when
+        // expected
         mockMvc.perform(multipart("/api/signup")
                         .file(jsonRequest)
-                        .file(file)
+                        .file(fileRequest)
                         .contentType(MULTIPART_FORM_DATA)
                         .characterEncoding("UTF-8"))
                 .andExpect(status().isOk())
                 .andExpect(content().string(""))
                 .andDo(print());
 
-        Member member = memberRepository.findById(memberId).orElse(null);
+        Member member = memberRepository.findByUserId(userId).orElse(null);
 
-        // then
         assertEquals(1L, memberRepository.count());
-        assertEquals(request.getMemberId(), Objects.requireNonNull(member).getId());
+        assertEquals(request.getUserId(), Objects.requireNonNull(member).getUserId());
         assertEquals(request.getPassword(), member.getPassword());
         assertEquals(request.getName(), member.getDetails().getName());
         assertEquals(Gender.valueOf(request.getGender()), member.getDetails().getGender());
@@ -100,15 +98,12 @@ class MemberControllerTest {
     @Test
     @DisplayName("아이디를 입력하지 않으면 오류가 발생한다.")
     void unSuccessSignup() throws Exception {
-
-        String email = "sksmss123@gmail.com";
-
         // given
         JoinRequest request = JoinRequest.builder()
                 .password("jinkwanho12#")
                 .name("관호")
                 .gender("MALE")
-                .mail(email)
+                .mail("sksmss123@gmail.com")
                 .address("서울시 양산길 33")
                 .phoneNumber("010-1234-5678")
                 .role("ROLE_USER")
@@ -138,8 +133,8 @@ class MemberControllerTest {
                         .characterEncoding("UTF-8"))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.code").value("400"))
-                .andExpect(jsonPath("$.message").value("잘못된 요청입니다."))
-                .andExpect(jsonPath("$.validation.memberId").value("아이디는 필수로 입력해야 합니다."))
+                .andExpect(jsonPath("$.message").value("검증 오류입니다."))
+                .andExpect(jsonPath("$.validation.userId").value("아이디는 필수로 입력해야 합니다."))
                 .andDo(print());
     }
 }

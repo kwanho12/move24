@@ -6,12 +6,19 @@ import com.move24.exception.exception.PostNotFoundException;
 import com.move24.repository.DriverRepository;
 import com.move24.repository.MemberRepository;
 import com.move24.request.DriverPostRequest;
+import com.move24.request.DriverSearchCondition;
+import com.move24.response.DriverOneResponse;
+import com.move24.response.DriversResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 
+@Slf4j
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -23,7 +30,7 @@ public class DriverService {
     @Transactional
     public void write(DriverPostRequest request) {
 
-        Member member = memberRepository.findById(request.getDriverId()).orElse(null);
+        Member member = memberRepository.findByUserId(request.getDriverId()).orElse(null);
 
         Driver driver = Driver.builder()
                 .member(member)
@@ -36,11 +43,24 @@ public class DriverService {
         driverRepository.save(driver);
     }
 
-    public Driver getDriver(String driverId) {
+    public DriverOneResponse getDriver(String driverId) {
+       return driverRepository.getDriverOne(driverId).orElseThrow(() -> new PostNotFoundException("기사 게시글이 존재하지 않습니다."));
+    }
 
-        Member member = memberRepository.findById(driverId).orElse(null);
+    public Page<DriversResponse> getDrivers(DriverSearchCondition condition, Pageable pageable) {
+        return driverRepository.getDrivers(condition, pageable);
+    }
 
-        return driverRepository.findByMember(member)
+
+    /// 수정
+    public void updateDriver(String driverId) {
+
+        Member member = memberRepository.findByUserId(driverId).orElse(null);
+
+        Driver driver = driverRepository.findByMember(member)
                 .orElseThrow(() -> new PostNotFoundException("존재하지 않는 기사입니다."));
+
+//        return DriverOneResponse.builder().build();
+
     }
 }

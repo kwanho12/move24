@@ -21,7 +21,7 @@ import static com.move24.enums.Extension.*;
 @Slf4j
 @Entity
 @Getter
-@NoArgsConstructor(force = true, access = AccessLevel.PROTECTED)
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Image extends DateEntity {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -29,10 +29,10 @@ public class Image extends DateEntity {
     private Long id;
 
     @Enumerated(EnumType.STRING)
-    private final Extension extension;
+    private Extension extension;
 
-    private final String fileName;
-    private final String originalName;
+    private String fileName;
+    private String originalName;
 
     public Image(MultipartFile file) {
 

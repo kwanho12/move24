@@ -57,7 +57,7 @@ public class MemberServiceTest {
         );
 
         JoinRequest request = JoinRequest.builder()
-                .memberId("skdltm12")
+                .userId("skdltm12")
                 .password("good12#")
                 .name("길동")
                 .gender("MALE")
@@ -78,7 +78,7 @@ public class MemberServiceTest {
         assertEquals("testFile.jpeg", savedImage.getOriginalName());
 
         Member savedMember = memberCaptor.getValue();
-        assertEquals(request.getMemberId(), savedMember.getId());
+        assertEquals(request.getUserId(), savedMember.getUserId());
         assertEquals(request.getPassword(), savedMember.getPassword());
         assertEquals(savedImage, savedMember.getImage());
 
@@ -88,28 +88,28 @@ public class MemberServiceTest {
     @DisplayName("회원가입시 아이디 중복 검사(이미 존재하는 아이디)")
     void idAlreadyExists() {
         // given
-        String memberId = "existingId";
-        when(memberRepository.existsById(memberId)).thenReturn(true);
+        String userId = "existingId";
+        when(memberRepository.existsByUserId(userId)).thenReturn(true);
 
         // when
-        assertThrows(IdAlreadyExistsException.class, () -> memberService.checkId(memberId));
+        assertThrows(IdAlreadyExistsException.class, () -> memberService.validateDuplicateId(userId));
 
         // then
-        verify(memberRepository).existsById(memberId);
+        verify(memberRepository).existsByUserId(userId);
     }
 
     @Test
     @DisplayName("회원가입시 아이디 중복 검사(사용 가능한 아이디)")
     void idNotExists() {
         // given
-        String memberId = "newId";
-        when(memberRepository.existsById(memberId)).thenReturn(false);
+        String userId = "newId";
+        when(memberRepository.existsByUserId(userId)).thenReturn(false);
 
         // when
-        memberService.checkId(memberId);
+        memberService.validateDuplicateId(userId);
 
         // then
-        verify(memberRepository).existsById(memberId);
+        verify(memberRepository).existsByUserId(userId);
     }
 
 }

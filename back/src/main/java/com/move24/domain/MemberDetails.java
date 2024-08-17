@@ -9,10 +9,18 @@ import lombok.*;
 
 @Embeddable
 @Getter
-@Builder
-@AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class MemberDetails {
+
+    @Builder
+    public MemberDetails(Gender gender, String name, String mail, String phoneNumber, String address, Role role) {
+        this.gender = gender;
+        this.name = name;
+        this.mail = mail;
+        this.phoneNumber = phoneNumber;
+        this.address = address;
+        this.role = role;
+    }
 
     @Enumerated(EnumType.STRING)
     private Gender gender;

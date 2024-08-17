@@ -15,9 +15,11 @@ import java.time.LocalDateTime;
 @ToString
 public class Member extends DateEntity {
 
-    @Id
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "member_id")
-    private String id;
+    private Long id;
+
+    private String userId;
     private String password;
 
     @OneToOne(fetch = FetchType.LAZY)

@@ -26,4 +26,7 @@ public class Driver extends DateEntity {
 
     private int likeCount;
 
+    public void changePost() {
+
+    }
 }

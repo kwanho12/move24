@@ -16,7 +16,7 @@ public class JoinRequest {
 
     @NotBlank(message = "아이디는 필수로 입력해야 합니다.")
     @Pattern(regexp = "^[a-z0-9]{6,15}$", message = "ID는 6~15글자의 영문 소문자와 숫자만 입력 가능합니다.")
-    private String memberId;
+    private String userId;
 
     @NotBlank(message = "비밀번호는 필수로 입력해야 합니다.")
     @Pattern(

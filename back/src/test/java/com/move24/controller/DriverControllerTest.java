@@ -11,6 +11,7 @@ import com.move24.repository.DriverRepository;
 import com.move24.repository.ImageRepository;
 import com.move24.repository.MemberRepository;
 import com.move24.request.DriverPostRequest;
+import com.move24.response.DriverOneResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +19,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
@@ -51,11 +53,11 @@ class DriverControllerTest {
     private MemberRepository memberRepository;
 
     @Test
-    @DisplayName("게시글 등록시 DB에 데이터가 저장된다.")
+    @DisplayName("기사 게시글 등록시 DB에 데이터가 저장된다.")
     void successPost() throws Exception {
         // given
         String driverId = "skdltm12";
-        Member member = getMember(driverId);
+        Member member = saveMember(driverId);
 
         DriverPostRequest request = DriverPostRequest.builder()
                 .driverId(driverId)
@@ -66,22 +68,51 @@ class DriverControllerTest {
         String json = objectMapper.writeValueAsString(request);
 
         // when
-        mockMvc.perform(MockMvcRequestBuilders.post("/api/driver")
-                        .contentType(APPLICATION_JSON)
-                        .content(json))
-                .andExpect(MockMvcResultMatchers.status().isOk())
+        ResultActions actions = mockMvc.perform(MockMvcRequestBuilders.post("/api/driver")
+                .contentType(APPLICATION_JSON)
+                .content(json));
+
+        // then
+        actions.andExpect(MockMvcResultMatchers.status().isOk())
                 .andDo(MockMvcResultHandlers.print());
 
         Driver driver = driverRepository.findByMember(member).orElse(null);
 
-        // then
         assertEquals(1L, driverRepository.count());
-        assertEquals(request.getDriverId(), Objects.requireNonNull(driver).getMember().getId());
+        assertEquals(request.getDriverId(), Objects.requireNonNull(driver).getMember().getUserId());
         assertEquals(request.getExperienceYear(), driver.getExperienceYear());
         assertEquals(request.getContent(), driver.getContent());
     }
 
-    private Member getMember(String driverId) {
+    @Test
+    @DisplayName("기사 게시글 1개 조회")
+    void viewPostOne() throws Exception {
+        // given
+        String driverId = "skdltm12";
+        Member member = saveMember(driverId);
+        Driver driver = saveDriver(member);
+
+        // when
+        ResultActions actions = mockMvc.perform(MockMvcRequestBuilders.get(
+                        "/api/driver/{driverId}", driverId)
+                .contentType(APPLICATION_JSON));
+
+        // then
+        actions.andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.driverId")
+                        .value(driver.getMember().getUserId()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.experienceYear")
+                        .value(driver.getExperienceYear()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.content")
+                        .value(driver.getContent()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.fileName")
+                        .value(member.getImage().getFileName()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.gender")
+                        .value(member.getDetails().getGender().name()))
+                .andDo(MockMvcResultHandlers.print());
+    }
+
+    private Member saveMember(String driverId) {
         MockMultipartFile file = new MockMultipartFile(
                 "file",
                 "testFile.jpeg",
@@ -103,7 +134,7 @@ class DriverControllerTest {
 
 
         Member member = Member.builder()
-                .id(driverId)
+                .userId(driverId)
                 .password("rkskek12")
                 .image(image)
                 .status(MemberStatus.ACTIVE)
@@ -115,4 +146,17 @@ class DriverControllerTest {
 
         return memberRepository.save(member);
     }
+
+    private Driver saveDriver(Member member) {
+        Driver driver = Driver.builder()
+                .member(member)
+                .experienceYear(10)
+                .content("빠르고 신속한 운송 서비스를 제공합니다.")
+                .likeCount(0)
+                .createDate(LocalDateTime.now())
+                .updateDate(LocalDateTime.now())
+                .build();
+        return driverRepository.save(driver);
+    }
+
 }
