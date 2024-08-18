@@ -83,7 +83,7 @@ class DriverServiceTest {
         when(driverRepository.getDriverOne(driverId)).thenReturn(Optional.of(driverOneResponse));
 
         // when
-        DriverOneResponse result = driverService.getDriver(driverId);
+        DriverOneResponse result = driverService.getOne(driverId);
 
         // then
         assertEquals(driverId, result.getDriverId());
@@ -98,12 +98,7 @@ class DriverServiceTest {
         when(driverRepository.getDriverOne(driverId)).thenReturn(Optional.empty());
 
         // expected
-        assertThrows(PostNotFoundException.class, () -> {driverService.getDriver("skdltm12");});
+        assertThrows(PostNotFoundException.class, () -> {driverService.getOne("skdltm12");});
     }
 
-    @Test
-    @DisplayName("기사 전체 게시글 조회")
-    void viewPosts() {
-
-    }
 }

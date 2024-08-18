@@ -34,4 +34,16 @@ import { RouterLink } from 'vue-router';
 </main>
 </template>
 <style scoped>
+a:link {
+    color: #b40431;
+    text-decoration: none;
+}
+a:visited {
+    color: #b40431;
+    text-decoration: none;
+}
+a:hover {
+    color: #b40431;
+    text-decoration: none;
+}
 </style>

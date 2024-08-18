@@ -43,11 +43,11 @@ public class DriverService {
         driverRepository.save(driver);
     }
 
-    public DriverOneResponse getDriver(String driverId) {
+    public DriverOneResponse getOne(String driverId) {
        return driverRepository.getDriverOne(driverId).orElseThrow(() -> new PostNotFoundException("기사 게시글이 존재하지 않습니다."));
     }
 
-    public Page<DriversResponse> getDrivers(DriverSearchCondition condition, Pageable pageable) {
+    public Page<DriversResponse> getList(DriverSearchCondition condition, Pageable pageable) {
         return driverRepository.getDrivers(condition, pageable);
     }
 

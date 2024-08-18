@@ -32,8 +32,7 @@ public class JoinRequest {
     @EnumValidation(enumClass = Gender.class, message = "성별 유형이 올바르지 않습니다.", ignoreCase = true)
     private String gender;
 
-    @Email
-    @NotNull
+    @Pattern(regexp = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+.[A-Za-z]{2,6}$", message = "이메일 형식에 맞지 않습니다.")
     private String mail;
 
     @NotBlank(message = "주소는 필수로 입력해야 합니다.")

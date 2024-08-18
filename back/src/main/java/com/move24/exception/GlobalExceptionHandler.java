@@ -1,6 +1,6 @@
 package com.move24.exception;
 
-import com.move24.exception.exception.IdAlreadyExistsException;
+import com.move24.exception.exception.*;
 import com.move24.response.ErrorResponse;
 import com.move24.response.ValidationErrorResponse;
 import lombok.extern.slf4j.Slf4j;
@@ -30,7 +30,13 @@ public class GlobalExceptionHandler {
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(RuntimeException.class)
+    @ExceptionHandler({ExtensionNotMatchException.class,
+            FileNameNotValidException.class,
+            GenderNotValidException.class,
+            IdAlreadyExistsException.class,
+            ImageNotFoundException.class,
+            ImageNotSaveException.class,
+            PostNotFoundException.class})
     public ErrorResponse runtimeExceptionHandler(RuntimeException e) {
         return ErrorResponse.builder()
                 .code("400")

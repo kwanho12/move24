@@ -53,6 +53,7 @@ public class DriverRepositoryImpl implements DriverRepositoryCustom {
     public Page<DriversResponse> getDrivers(DriverSearchCondition condition, Pageable pageable) {
         List<DriversResponse> content = queryFactory
                 .select(Projections.fields(DriversResponse.class,
+                        member.userId.as("driverId"),
                         member.details.name,
                         driver.experienceYear,
                         driver.likeCount,

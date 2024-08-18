@@ -3,21 +3,19 @@ package com.move24.service;
 import com.move24.domain.*;
 import com.move24.enums.MemberStatus;
 import com.move24.enums.Role;
+import com.move24.exception.exception.ImageNotFoundException;
 import com.move24.exception.exception.IdAlreadyExistsException;
 import com.move24.repository.ImageRepository;
 import com.move24.repository.MemberRepository;
 import com.move24.request.JoinRequest;
-import com.move24.response.DriversResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
-import java.util.Optional;
 
 import static com.move24.enums.Gender.*;
 
@@ -39,6 +37,14 @@ public class MemberService {
         boolean isExist = memberRepository.existsByUserId(request.getUserId());
         if(isExist) {
             throw new IdAlreadyExistsException("이미 존재하는 아이디입니다.");
+        }
+        if(file.isEmpty()) {
+            throw new ImageNotFoundException("이미지가 업로드되지 않았습니다.");
+        }
+        String contentType = file.getContentType();
+        log.info("타입 : " + contentType);
+        if (contentType == null || !contentType.startsWith("image/")) {
+            throw new IllegalArgumentException("이미지 파일만 허용됩니다.");
         }
 
         Image image = new Image(file);

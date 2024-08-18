@@ -26,6 +26,11 @@ const router = createRouter({
       component: () => import("../views/DriversView.vue")
     },
     {
+      path: '/drivers/:driverId',
+      name: 'driver',
+      component: () => import("../views/DriverView.vue")
+    },
+    {
       path: '/post-driver',
       name: 'post-driver',
       component: () => import("../views/PostDriverView.vue")

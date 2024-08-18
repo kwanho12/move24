@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 @Builder
 public class DriversResponse {
 
+    private String driverId;
     private String name;
     private int experienceYear;
     private int likeCount;

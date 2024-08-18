@@ -11,7 +11,6 @@ import com.move24.repository.DriverRepository;
 import com.move24.repository.ImageRepository;
 import com.move24.repository.MemberRepository;
 import com.move24.request.DriverPostRequest;
-import com.move24.response.DriverOneResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,8 +28,9 @@ import java.time.LocalDateTime;
 import java.util.Objects;
 
 import static com.move24.enums.Gender.valueOf;
-import static org.junit.jupiter.api.Assertions.*;
-import static org.springframework.http.MediaType.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.springframework.http.MediaType.APPLICATION_JSON;
+import static org.springframework.http.MediaType.IMAGE_JPEG_VALUE;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -94,7 +94,7 @@ class DriverControllerTest {
 
         // when
         ResultActions actions = mockMvc.perform(MockMvcRequestBuilders.get(
-                        "/api/driver/{driverId}", driverId)
+                        "/api/drivers/{driverId}", driverId)
                 .contentType(APPLICATION_JSON));
 
         // then

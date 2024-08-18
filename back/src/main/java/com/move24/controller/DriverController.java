@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -24,15 +25,14 @@ public class DriverController {
         driverService.write(request);
     }
 
-    @GetMapping("/api/driver/{driverId}")
+    @GetMapping("/api/drivers/{driverId}")
     public DriverOneResponse getDriverOne(@PathVariable(name = "driverId") String driverId) {
-        return driverService.getDriver(driverId);
+        return driverService.getOne(driverId);
     }
 
-    // 수정(API로 요청, 응답할 때는 절대 엔티티를 사용하지 않는다 -> dto를 따로 만들어서 사용)
     @GetMapping("/api/drivers")
-    public Page<DriversResponse> getDrivers(DriverSearchCondition condition, Pageable pageable) {
-        return driverService.getDrivers(condition, pageable);
+    public Page<DriversResponse> getDrivers(DriverSearchCondition condition,@PageableDefault(size = 6) Pageable pageable) {
+        return driverService.getList(condition, pageable);
     }
 
     static class Result<T> {
