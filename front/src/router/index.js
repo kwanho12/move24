@@ -16,14 +16,14 @@ const router = createRouter({
       component: () => import('../views/LoginView.vue')
     },
     {
-      path: '/signup',
+      path: '/members/new',
       name: 'signup',
       component: () => import('../views/SignupView.vue')
     },
     {
-      path: '/drivers',
-      name: 'drivers',
-      component: () => import("../views/DriversView.vue")
+      path: '/drivers-new',
+      name: 'drivers-new',
+      component: () => import("../views/PostDriverView.vue")
     },
     {
       path: '/drivers/:driverId',
@@ -31,9 +31,9 @@ const router = createRouter({
       component: () => import("../views/DriverView.vue")
     },
     {
-      path: '/post-driver',
-      name: 'post-driver',
-      component: () => import("../views/PostDriverView.vue")
+      path: '/drivers',
+      name: 'drivers',
+      component: () => import("../views/DriversView.vue")
     },
     {
       path: '/review',

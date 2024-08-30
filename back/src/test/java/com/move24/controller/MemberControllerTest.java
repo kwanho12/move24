@@ -1,11 +1,12 @@
 package com.move24.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.move24.domain.Member;
-import com.move24.enums.Gender;
-import com.move24.enums.Role;
-import com.move24.repository.MemberRepository;
-import com.move24.request.JoinRequest;
+import com.move24.domain.member.dto.request.MemberJoinRequest;
+import com.move24.domain.member.entity.member.Gender;
+import com.move24.domain.member.entity.member.Member;
+import com.move24.domain.member.entity.member.Role;
+import com.move24.domain.member.repository.MemberRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,19 +14,19 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.transaction.annotation.Transactional;
 
-
-import java.nio.file.Files;
 import java.util.Objects;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.http.MediaType.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 
+@Slf4j
 @SpringBootTest
 @AutoConfigureMockMvc
 @Transactional
@@ -41,11 +42,11 @@ class MemberControllerTest {
     private MemberRepository memberRepository;
 
     @Test
-    @DisplayName("회원가입시 DB에 데이터가 저장된다.")
+    @DisplayName("새로운 회원이 등록된다.")
     void successSignup() throws Exception {
         // given
         String userId = "skdltm12";
-        JoinRequest request = JoinRequest.builder()
+        MemberJoinRequest request = MemberJoinRequest.builder()
                 .userId(userId)
                 .password("jinkwanho12#")
                 .name("관호")
@@ -72,16 +73,21 @@ class MemberControllerTest {
                 "test file".getBytes()
         );
 
-        // expected
-        mockMvc.perform(multipart("/api/signup")
-                        .file(jsonRequest)
-                        .file(fileRequest)
-                        .contentType(MULTIPART_FORM_DATA)
-                        .characterEncoding("UTF-8"))
-                .andExpect(status().isOk())
+        // when
+        ResultActions actions = mockMvc.perform(multipart("/api/members/new")
+                .file(jsonRequest)
+                .file(fileRequest)
+                .contentType(MULTIPART_FORM_DATA)
+                .characterEncoding("UTF-8"));
+
+        // then
+        actions.andExpect(status().isOk())
                 .andExpect(content().string(""))
                 .andDo(print());
 
+        /**
+         * orElse 수정 예정
+         */
         Member member = memberRepository.findByUserId(userId).orElse(null);
 
         assertEquals(1L, memberRepository.count());
@@ -96,10 +102,10 @@ class MemberControllerTest {
     }
 
     @Test
-    @DisplayName("아이디를 입력하지 않으면 오류가 발생한다.")
+    @DisplayName("아이디를 입력하지 않으면 회원가입이 되지 않는다.")
     void unSuccessSignup() throws Exception {
         // given
-        JoinRequest request = JoinRequest.builder()
+        MemberJoinRequest request = MemberJoinRequest.builder()
                 .password("jinkwanho12#")
                 .name("관호")
                 .gender("MALE")
@@ -109,13 +115,11 @@ class MemberControllerTest {
                 .role("ROLE_USER")
                 .build();
 
-        String json = objectMapper.writeValueAsString(request);
-
         MockMultipartFile jsonRequest = new MockMultipartFile(
                 "request",
                 null,
                 APPLICATION_JSON_VALUE,
-                json.getBytes()
+                objectMapper.writeValueAsString(request).getBytes()
         );
 
         MockMultipartFile file = new MockMultipartFile(
@@ -125,13 +129,15 @@ class MemberControllerTest {
                 "test file".getBytes()
         );
 
-        // expected
-        mockMvc.perform(multipart("/api/signup")
-                        .file(jsonRequest)
-                        .file(file)
-                        .contentType(MULTIPART_FORM_DATA)
-                        .characterEncoding("UTF-8"))
-                .andExpect(status().isBadRequest())
+        // when
+        ResultActions actions = mockMvc.perform(multipart("/api/members/new")
+                .file(jsonRequest)
+                .file(file)
+                .contentType(MULTIPART_FORM_DATA)
+                .characterEncoding("UTF-8"));
+
+        // then
+        actions.andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.code").value("400"))
                 .andExpect(jsonPath("$.message").value("검증 오류입니다."))
                 .andExpect(jsonPath("$.validation.userId").value("아이디는 필수로 입력해야 합니다."))

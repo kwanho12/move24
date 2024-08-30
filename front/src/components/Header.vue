@@ -25,7 +25,7 @@ import { RouterLink } from 'vue-router';
                 <RouterLink to="/login">
                     <button type="button" class="btn btn-outline-danger me-2">로그인</button>
                 </RouterLink>
-                <RouterLink to="/signup">
+                <RouterLink to="/members/new">
                     <button type="button" class="btn btn-danger">회원가입</button>
                 </RouterLink>
             </div>

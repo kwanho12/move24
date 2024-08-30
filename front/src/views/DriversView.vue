@@ -1,11 +1,14 @@
 <script setup>
 import { RouterLink } from "vue-router";
 import axios from "axios";
-import { ref, onMounted } from "vue";
+import { ref, onMounted, computed } from "vue";
 
-const page = ref(null);
-const size = ref(null);
-const responseData = ref("");
+const page = ref(0);
+const totalPages = ref(0);
+const pageGroup = ref(0);
+const pagesPerGroup = 3;
+
+const responseData = ref([]);
 
 const getImageUrl = (fileName) => {
   return "/member/" + fileName;
@@ -20,15 +23,45 @@ const fetchPosts = async () => {
     const response = await axios.get("/api/drivers", {
       params: {
         page: page.value,
-        size: size.value,
       },
     });
     console.log(response.data);
     responseData.value = response.data.content;
+    totalPages.value = response.data.totalPages;
   } catch (error) {
     console.error(error.response ? error.response.data : error.message);
   }
 };
+
+const changePage = (newPage) => {
+  if (newPage >= 0 && newPage < totalPages.value) {
+    page.value = newPage;
+    fetchPosts();
+  }
+};
+
+const changePageGroup = (direction) => {
+  if (
+    direction === "next" &&
+    (pageGroup.value + 1) * pagesPerGroup < totalPages.value
+  ) {
+    pageGroup.value += 1;
+    page.value = pageGroup.value * pagesPerGroup;
+    fetchPosts();
+  } 
+
+  if (direction === "prev" && pageGroup.value > 0) {
+    pageGroup.value -= 1;
+    page.value = pageGroup.value * pagesPerGroup;
+    fetchPosts();
+  }
+};
+
+const currentGroupPages = computed(() => {
+  const startPage = pageGroup.value * pagesPerGroup;
+  const endPage = Math.min(startPage + pagesPerGroup, totalPages.value);
+  return Array.from({ length: endPage - startPage }, (_, i) => startPage + i);
+});
 
 onMounted(() => {
   fetchPosts();
@@ -39,7 +72,6 @@ onMounted(() => {
     <div class="album py-5 bg-body-tertiary">
       <div class="container">
         <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
-
           <div v-for="data in responseData" class="col">
             <div class="card shadow-lg">
               <div class="card-header">{{ data.name }} 기사님</div>
@@ -68,47 +100,65 @@ onMounted(() => {
                       </RouterLink>
                     </div>
                     <small class="text-body-secondary"
-                      >{{ data.likeCount }} like
+                      >평점 : {{ data.averagePoint }}
                     </small>
                   </div>
                 </li>
               </ul>
             </div>
           </div>
-
         </div>
         <div class="text-end">
-          <RouterLink to="/post-driver">
-            <button class="btn btn-danger mt-3 mb-3" type="button">기사 등록</button>
+          <RouterLink to="/drivers-new">
+            <button class="btn btn-outline-danger mt-3 mb-3" type="button">
+              기사 등록
+            </button>
           </RouterLink>
         </div>
         <div class="d-flex justify-content-center">
           <nav>
             <ul class="pagination">
-              <li class="page-item">
-                <a class="page-link" href="#" aria-label="Previous">
+              <li
+                class="page-item"
+                :class="{ disabled: pageGroup === 0 }"
+              >
+                <a
+                  class="page-link"
+                  href="#"
+                  aria-label="Previous"
+                  @click.prevent="changePageGroup('prev')"
+                >
                   <span aria-hidden="true">&laquo;</span>
                 </a>
               </li>
-              <li class="page-item">
-                <a class="page-link" href="#">이전</a>
+              <li
+                v-for="n in currentGroupPages"
+                :key="n"
+                class="page-item"
+                :class="{ active: page === n }"
+              >
+                <a
+                  class="page-link"
+                  href="#"
+                  @click.prevent="changePage(n)"
+                >
+                  {{ n + 1 }}
+                </a>
               </li>
-              <li class="page-item"><a class="page-link" href="#">1</a></li>
-              <li class="page-item"><a class="page-link" href="#">2</a></li>
-              <li class="page-item"><a class="page-link" href="#">3</a></li>
-              <li class="page-item"><a class="page-link" href="#">4</a></li>
-              <li class="page-item"><a class="page-link" href="#">5</a></li>
-              <li class="page-item"><a class="page-link" href="#">6</a></li>
-              <li class="page-item"><a class="page-link" href="#">7</a></li>
-              <li class="page-item"><a class="page-link" href="#">8</a></li>
-              <li class="page-item"><a class="page-link" href="#">9</a></li>
-              <li class="page-item"><a class="page-link" href="#">10</a></li>
-              <li class="page-item"><a class="page-link" href="#">다음</a></li>
-              <li class="page-item">
-                <a class="page-link" href="#" aria-label="Next">
+              <li
+                class="page-item"
+                :class="{ disabled: (pageGroup + 1) * pagesPerGroup >= totalPages }"
+              >
+                <a
+                  class="page-link"
+                  href="#"
+                  aria-label="Next"
+                  @click.prevent="changePageGroup('next')"
+                >
                   <span aria-hidden="true">&raquo;</span>
                 </a>
               </li>
+
             </ul>
           </nav>
         </div>
@@ -195,7 +245,13 @@ onMounted(() => {
   display: block !important;
 }
 
-.page-link {
+a {
   color: #b40431;
 }
+
+.pagination .page-item.active .page-link {
+  background: #b40431;
+  border-color: #b40431; 
+}
+
 </style>

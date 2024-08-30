@@ -32,8 +32,10 @@ const onFileChange = (event) => {
 
 const checkId = async () => {
   try {
-    const response = await axios.post("/api/signup/check-id", {
-      userId: userId.value,
+    const response = await axios.get("/api/members/new/id-duplicate-check", {
+      params: {
+        userId: userId.value,
+      }
     });
     if (!response.data) {
       idCheckMessage.value = "사용 가능한 아이디입니다.";
@@ -76,7 +78,7 @@ const register = async () => {
   );
 
   try {
-    const response = await axios.post("/api/signup", formData, {
+    const response = await axios.post("/api/members/new", formData, {
       headers: {
         "Content-Type": "multipart/form-data",
       },
@@ -126,7 +128,7 @@ watch(userId, () => {
                 />
               </div>
               <div class="col-sm-2">
-                <button type="button" class="btn btn-danger" @click="checkId">
+                <button type="button" class="btn btn-outline-danger" @click="checkId">
                   중복 확인
                 </button>
               </div>
@@ -225,7 +227,7 @@ watch(userId, () => {
                 />
               </div>
             </div>
-            <button class="w-100 btn btn-danger btn-lg mb-3 mt-3" type="submit">
+            <button class="w-100 btn btn-outline-danger btn-lg mb-3 mt-3" type="submit">
               회원가입
             </button>
           </form>

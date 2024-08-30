@@ -1,23 +1,27 @@
 package com.move24.service;
 
-import com.move24.domain.Driver;
-import com.move24.domain.Member;
-import com.move24.exception.exception.PostNotFoundException;
-import com.move24.repository.DriverRepository;
-import com.move24.repository.MemberRepository;
-import com.move24.request.DriverPostRequest;
-import com.move24.response.DriverOneResponse;
+import com.move24.domain.driver.dto.request.DriverPostServiceRequest;
+import com.move24.domain.driver.dto.response.DriverOneResponse;
+import com.move24.domain.driver.entity.Driver;
+import com.move24.domain.driver.exception.DriverNotFoundException;
+import com.move24.domain.driver.repository.DriverRepository;
+import com.move24.domain.driver.service.DriverService;
+import com.move24.domain.member.entity.member.Member;
+import com.move24.domain.member.repository.MemberRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.*;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
-import static org.mockito.Mockito.when;
 
 
 @ExtendWith(MockitoExtension.class)
@@ -36,13 +40,13 @@ class DriverServiceTest {
     ArgumentCaptor<Driver> driverCaptor;
 
     @Test
-    @DisplayName("게시글 등록을 성공한다.")
+    @DisplayName("새로운 게시글이 등록된다.")
     void successPost() {
         // given
         String driverId = "skdltm12";
         Member member = saveMember(driverId);
 
-        DriverPostRequest request = DriverPostRequest.builder()
+        DriverPostServiceRequest request = DriverPostServiceRequest.builder()
                 .driverId(driverId)
                 .experienceYear(5)
                 .content("빠르고 신속한 운송 서비스를 제공합니다.")
@@ -71,7 +75,7 @@ class DriverServiceTest {
     }
 
     @Test
-    @DisplayName("기사 게시글 1개 조회")
+    @DisplayName("기사의 상세 정보를 조회한다.")
     void viewPostOne() {
         // given
         String driverId = "skdltm12";
@@ -90,7 +94,7 @@ class DriverServiceTest {
     }
 
     @Test
-    @DisplayName("존재하지 않는 기사 게시글 조회 시 예외 발생")
+    @DisplayName("존재하지 않는 기사 게시글을 조회할 수 없다.")
     void viewPostNotFound() {
 
         // given
@@ -98,7 +102,7 @@ class DriverServiceTest {
         when(driverRepository.getDriverOne(driverId)).thenReturn(Optional.empty());
 
         // expected
-        assertThrows(PostNotFoundException.class, () -> {driverService.getOne("skdltm12");});
+        assertThrows(DriverNotFoundException.class, () -> {driverService.getOne("skdltm12");});
     }
 
 }

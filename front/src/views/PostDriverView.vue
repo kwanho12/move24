@@ -16,7 +16,7 @@ const register = async () => {
   };
 
   try {
-    const response = await axios.post("api/driver", requestData);
+    const response = await axios.post("api/drivers/new", requestData);
     if (response.status === 200) {
       router.replace("/drivers");
     }
@@ -30,21 +30,24 @@ const register = async () => {
 
 </script>
 <template>
-  <form @submit.prevent="register">
+  <form @submit.prevent="register" id="submit">
     <div class="container">
       <div class="row">
         <div class="col-xl-3"></div>
         <div class="col-xl-6">
+          <h3 class="mb-3" style="color: #b40431;">기사 홍보 글 작성</h3>
           <h6>경력</h6>
-          <div class="d-flex">
+          <div class="d-flex align-items-center">
             <input
               type="number"
-              class="mb-3 form-control"
+              class="mb-3 ml-3 form-control border-danger"
               v-model="experienceYear"
-            />년
+              style="width: 7%"
+            />
+            <p class="ml-3">년</p>
           </div>
           <h6>설명</h6>
-          <textarea class="mb-3 form-control" v-model="content"></textarea>
+          <textarea class="mb-3 form-control border-danger" v-model="content" style="height: 70%;"></textarea>
           <button type="submit" class="btn btn-outline-danger">작성하기</button>
         </div>
         <div class="col-xl-3"></div>
