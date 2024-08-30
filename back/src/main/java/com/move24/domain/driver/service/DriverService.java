@@ -12,9 +12,12 @@ import com.move24.domain.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Slf4j
 @Service
@@ -46,7 +49,18 @@ public class DriverService {
     }
 
     public Page<DriversResponse> getList(DriverSearchServiceCondition condition, Pageable pageable) {
-        return driverRepository.getDrivers(condition, pageable);
+        Page<DriversResponse> pageResponse = driverRepository.getDrivers(condition, pageable);
+
+        List<DriversResponse> content = pageResponse.getContent().stream()
+                .peek(driversResponse -> {
+                    if (driversResponse.getAveragePoint() == null) {
+                        driversResponse.setAveragePoint(0.0);
+                    }
+                })
+                .toList();
+        return new PageImpl<>(content, pageable, pageResponse.getTotalElements());
+
+//        return driverRepository.getDrivers(condition, pageable);
     }
 
     /// 수정

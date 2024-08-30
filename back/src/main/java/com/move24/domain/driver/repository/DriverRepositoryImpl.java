@@ -74,16 +74,17 @@ public class DriverRepositoryImpl implements DriverRepositoryCustom {
                 .join(member.image, image)
                 .where(nameContains(condition.getName()),
                         genderEq(condition.getGender()),
-                        mailContains(condition.getMail()))
+                        mailContains(condition.getMail()),
+                        phoneNumberContains(condition.getPhoneNumber()))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();
 
-        content.forEach(driversResponse -> {
-            if (driversResponse.getAveragePoint() == null) {
-                driversResponse.setAveragePoint(0.0);
-            }
-        });
+//        content.forEach(driversResponse -> {
+//            if (driversResponse.getAveragePoint() == null) {
+//                driversResponse.setAveragePoint(0.0);
+//            }
+//        });
 
         JPAQuery<Long> countQuery = queryFactory
                 .select(Wildcard.count)
