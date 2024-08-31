@@ -9,8 +9,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mock.web.MockMultipartFile;
 
-import java.util.Objects;
-
 import static com.move24.domain.member.entity.member.Gender.MALE;
 import static com.move24.domain.member.entity.member.Role.ROLE_DRIVER;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -28,22 +26,21 @@ class MemberRepositoryTest extends IntegrationTestSupport {
     @Test
     void findByUserId() {
         // given
-        Member member = createMember("test1", "김천재");
+        Member member = createMember("test1");
         memberRepository.save(member);
 
         // when
         Member findMember = memberRepository.findByUserId("test1").orElse(null);
 
         // then
-        assertThat(Objects.requireNonNull(findMember).getDetails().getName())
-                .isEqualTo("김천재");
+        assertThat(findMember).isEqualTo(member);
     }
 
     @DisplayName("회원가입할 때 이미 존재하는 아이디를 입력하면 true를 return한다.")
     @Test
     void existsByUserId() {
         // given
-        Member member = createMember("test1", "김천재");
+        Member member = createMember("test1");
         memberRepository.save(member);
 
         // when
@@ -67,14 +64,13 @@ class MemberRepositoryTest extends IntegrationTestSupport {
                 .build();
     }
 
-
-    private Member createMember(String userId, String name) {
+    private Member createMember(String userId) {
         Image image = createImage();
         imageRepository.save(image);
 
         MemberDetails memberDetails = MemberDetails.builder()
                 .gender(MALE)
-                .name(name)
+                .name("김천재")
                 .mail("skdltm@naver.com")
                 .phoneNumber("010-1234-5678")
                 .address("서울시 양산길 21 305호")
@@ -88,4 +84,5 @@ class MemberRepositoryTest extends IntegrationTestSupport {
                 .details(memberDetails)
                 .build();
     }
+
 }
