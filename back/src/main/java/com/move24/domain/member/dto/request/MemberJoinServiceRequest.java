@@ -42,11 +42,14 @@ public class MemberJoinServiceRequest {
 
     private void validate(String field, String message) {
         if (message != null) {
-            BusinessPolicyValidErrorResponse businessPolicyValidErrorResponse = BusinessPolicyValidErrorResponse.builder()
+            BusinessPolicyValidErrorResponse businessPolicyValidErrorResponse =
+                    BusinessPolicyValidErrorResponse.builder()
                     .field(field)
                     .message(message)
                     .build();
-            throw new BusinessPolicyValidationException(businessPolicyValidErrorResponse.getMessage(), businessPolicyValidErrorResponse);
+            throw new BusinessPolicyValidationException(
+                    businessPolicyValidErrorResponse.getMessage(), businessPolicyValidErrorResponse
+            );
         }
     }
 }

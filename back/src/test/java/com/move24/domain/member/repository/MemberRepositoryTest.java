@@ -8,12 +8,14 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.transaction.annotation.Transactional;
 
 import static com.move24.domain.member.entity.member.Gender.MALE;
 import static com.move24.domain.member.entity.member.Role.ROLE_DRIVER;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.MediaType.IMAGE_JPEG_VALUE;
 
+@Transactional
 class MemberRepositoryTest extends IntegrationTestSupport {
 
     @Autowired

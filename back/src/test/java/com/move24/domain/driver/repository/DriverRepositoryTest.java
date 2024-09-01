@@ -13,7 +13,6 @@ import com.move24.domain.member.repository.ImageRepository;
 import com.move24.domain.member.repository.MemberRepository;
 import com.move24.domain.review.entity.Review;
 import com.move24.domain.review.repository.ReviewRepository;
-import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +20,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Objects;
@@ -32,7 +32,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.groups.Tuple.tuple;
 import static org.springframework.http.MediaType.IMAGE_JPEG_VALUE;
 
-@Slf4j
+@Transactional
 class DriverRepositoryTest extends IntegrationTestSupport {
 
     @Autowired

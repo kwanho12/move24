@@ -1,9 +1,12 @@
 package com.move24;
 
+import com.move24.common.utils.ImageUtil;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.boot.test.mock.mockito.MockBean;
 
 @SpringBootTest
-@Transactional
 public abstract class IntegrationTestSupport {
+
+    @MockBean
+    protected ImageUtil imageUtil;
 }

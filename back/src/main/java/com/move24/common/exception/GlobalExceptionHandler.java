@@ -28,7 +28,7 @@ public class GlobalExceptionHandler {
 
         return ApiResponse.of(
                 HttpStatus.BAD_REQUEST,
-                "parameter 미입력 검증 오류입니다.",
+                "parameter 미입력 or 잘못된 유형 검증 오류입니다.",
                 validErrors
         );
     }
@@ -40,7 +40,7 @@ public class GlobalExceptionHandler {
             BusinessPolicyValidationException e) {
         return ApiResponse.of(
                 HttpStatus.BAD_REQUEST,
-                "정규식 검증 오류입니다.",
+                "비즈니스 정책과 관련된 정규식 검증 오류입니다.",
                 e.getBusinessPolicyValidErrorResponse()
         );
     }

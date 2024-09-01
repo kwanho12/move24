@@ -2,7 +2,6 @@ package com.move24.domain.member.service;
 
 import com.move24.IntegrationTestSupport;
 import com.move24.common.exception.BusinessPolicyValidationException;
-import com.move24.common.utils.ImageUtil;
 import com.move24.domain.member.dto.request.MemberJoinServiceRequest;
 import com.move24.domain.member.entity.image.Image;
 import com.move24.domain.member.entity.member.Gender;
@@ -15,8 +14,8 @@ import com.move24.domain.member.repository.MemberRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import static com.move24.domain.member.entity.member.Gender.MALE;
@@ -27,6 +26,7 @@ import static org.mockito.BDDMockito.any;
 import static org.mockito.BDDMockito.doNothing;
 import static org.springframework.http.MediaType.IMAGE_JPEG_VALUE;
 
+@Transactional
 class MemberServiceTest extends IntegrationTestSupport {
 
     @Autowired
@@ -38,14 +38,11 @@ class MemberServiceTest extends IntegrationTestSupport {
     @Autowired
     private MemberService memberService;
 
-    @MockBean
-    private ImageUtil imageUtil;
-
-    @DisplayName("회원가입을 성공한다.")
+    @DisplayName("신규 회원을 등록한다.")
     @Test
-    void signupSuccess() {
+    void signup() {
         // given
-        MemberJoinServiceRequest request = createMemberJoinRequest(
+        MemberJoinServiceRequest request = createJoinRequest(
                 "skdltm12",
                 "rkskek12#",
                 "김천재",
@@ -86,12 +83,12 @@ class MemberServiceTest extends IntegrationTestSupport {
 
     @DisplayName("이미 존재하는 아이디로 회원가입할 수 없다.")
     @Test
-    void signupFail() {
+    void signupWithAlreadyExistingID() {
         // given
         Member member = createMember("skdltm12");
         memberRepository.save(member);
 
-        MemberJoinServiceRequest request = createMemberJoinRequest(
+        MemberJoinServiceRequest request = createJoinRequest(
                 "skdltm12",
                 "rkskek12#",
                 "김천재",
@@ -111,7 +108,7 @@ class MemberServiceTest extends IntegrationTestSupport {
 
     @DisplayName("이미 존재하는 아이디를 입력하고 중복 체크하면 예외가 발생한다.")
     @Test
-    void validateDuplicateId() {
+    void CheckDuplicatesWithAlreadyExistingID() {
         // given
         Member member = createMember("skdltm12");
         memberRepository.save(member);
@@ -126,7 +123,7 @@ class MemberServiceTest extends IntegrationTestSupport {
     @Test
     void validationSuccessWithUserId1() {
         // given
-        MemberJoinServiceRequest request = createMemberJoinRequest(
+        MemberJoinServiceRequest request = createJoinRequest(
                 "skdltm",
                 "rkskek12#",
                 "김천재",
@@ -169,7 +166,7 @@ class MemberServiceTest extends IntegrationTestSupport {
     @Test
     void validationSuccessWithUserId2() {
         // given
-        MemberJoinServiceRequest request = createMemberJoinRequest(
+        MemberJoinServiceRequest request = createJoinRequest(
                 "skdltmskdltmskd",
                 "rkskek12#",
                 "김천재",
@@ -212,7 +209,7 @@ class MemberServiceTest extends IntegrationTestSupport {
     @Test
     void validationFailWithUserId1() {
         // given
-        MemberJoinServiceRequest request = createMemberJoinRequest(
+        MemberJoinServiceRequest request = createJoinRequest(
                 "Skdltm12",
                 "rkskek12#",
                 "김천재",
@@ -234,7 +231,7 @@ class MemberServiceTest extends IntegrationTestSupport {
     @Test
     void validationFailWithUserId2() {
         // given
-        MemberJoinServiceRequest request = createMemberJoinRequest(
+        MemberJoinServiceRequest request = createJoinRequest(
                 "skdlt",
                 "rkskek12#",
                 "김천재",
@@ -256,7 +253,7 @@ class MemberServiceTest extends IntegrationTestSupport {
     @Test
     void validationFailWithUserId3() {
         // given
-        MemberJoinServiceRequest request = createMemberJoinRequest(
+        MemberJoinServiceRequest request = createJoinRequest(
                 "skdltmskdltm1234",
                 "rkskek12#",
                 "김천재",
@@ -278,7 +275,7 @@ class MemberServiceTest extends IntegrationTestSupport {
     @Test
     void validationSuccessWithPassword1() {
         // given
-        MemberJoinServiceRequest request = createMemberJoinRequest(
+        MemberJoinServiceRequest request = createJoinRequest(
                 "skdltm",
                 "rksk1#",
                 "김천재",
@@ -321,7 +318,7 @@ class MemberServiceTest extends IntegrationTestSupport {
     @Test
     void validationSuccessWithPassword2() {
         // given
-        MemberJoinServiceRequest request = createMemberJoinRequest(
+        MemberJoinServiceRequest request = createJoinRequest(
                 "skdltm",
                 "rkskekrkskek12#",
                 "김천재",
@@ -364,7 +361,7 @@ class MemberServiceTest extends IntegrationTestSupport {
     @Test
     void validationFailWithPassword1() {
         // given
-        MemberJoinServiceRequest request = createMemberJoinRequest(
+        MemberJoinServiceRequest request = createJoinRequest(
                 "skdltm12",
                 "rkskek12",
                 "김천재",
@@ -386,7 +383,7 @@ class MemberServiceTest extends IntegrationTestSupport {
     @Test
     void validationFailWithPassword2() {
         // given
-        MemberJoinServiceRequest request = createMemberJoinRequest(
+        MemberJoinServiceRequest request = createJoinRequest(
                 "skdltm12",
                 "rksk#",
                 "김천재",
@@ -408,7 +405,7 @@ class MemberServiceTest extends IntegrationTestSupport {
     @Test
     void validationFailWithPassword3() {
         // given
-        MemberJoinServiceRequest request = createMemberJoinRequest(
+        MemberJoinServiceRequest request = createJoinRequest(
                 "skdltm12",
                 "rkskekrkskekrks#",
                 "김천재",
@@ -430,7 +427,7 @@ class MemberServiceTest extends IntegrationTestSupport {
     @Test
     void validationFailWithEmail1() {
         // given
-        MemberJoinServiceRequest request = createMemberJoinRequest(
+        MemberJoinServiceRequest request = createJoinRequest(
                 "skdltm12",
                 "rkskek12#",
                 "김천재",
@@ -452,7 +449,7 @@ class MemberServiceTest extends IntegrationTestSupport {
     @Test
     void validationFailWithEmail2() {
         // given
-        MemberJoinServiceRequest request = createMemberJoinRequest(
+        MemberJoinServiceRequest request = createJoinRequest(
                 "skdltm12",
                 "rkskek12#",
                 "김천재",
@@ -474,7 +471,7 @@ class MemberServiceTest extends IntegrationTestSupport {
     @Test
     void validationFailWithEmail3() {
         // given
-        MemberJoinServiceRequest request = createMemberJoinRequest(
+        MemberJoinServiceRequest request = createJoinRequest(
                 "skdltm12",
                 "rkskek12#",
                 "김천재",
@@ -496,7 +493,7 @@ class MemberServiceTest extends IntegrationTestSupport {
     @Test
     void validationFailWithPhoneNumber1() {
         // given
-        MemberJoinServiceRequest request = createMemberJoinRequest(
+        MemberJoinServiceRequest request = createJoinRequest(
                 "skdltm12",
                 "rkskek12#",
                 "김천재",
@@ -518,7 +515,7 @@ class MemberServiceTest extends IntegrationTestSupport {
     @Test
     void validationFailWithPhoneNumber2() {
         // given
-        MemberJoinServiceRequest request = createMemberJoinRequest(
+        MemberJoinServiceRequest request = createJoinRequest(
                 "skdltm12",
                 "rkskek12#",
                 "김천재",
@@ -540,7 +537,7 @@ class MemberServiceTest extends IntegrationTestSupport {
     @Test
     void validationSuccessWithName1() {
         // given
-        MemberJoinServiceRequest request = createMemberJoinRequest(
+        MemberJoinServiceRequest request = createJoinRequest(
                 "skdltm12",
                 "rkskek12#",
                 "김천",
@@ -583,7 +580,7 @@ class MemberServiceTest extends IntegrationTestSupport {
     @Test
     void validationSuccessWithName2() {
         // given
-        MemberJoinServiceRequest request = createMemberJoinRequest(
+        MemberJoinServiceRequest request = createJoinRequest(
                 "skdltm12",
                 "rkskek12#",
                 "김천재김천재김천재김천재김천재",
@@ -626,7 +623,7 @@ class MemberServiceTest extends IntegrationTestSupport {
     @Test
     void validationFailWithName1() {
         // given
-        MemberJoinServiceRequest request = createMemberJoinRequest(
+        MemberJoinServiceRequest request = createJoinRequest(
                 "skdltm12",
                 "rkskek12#",
                 "김",
@@ -648,7 +645,7 @@ class MemberServiceTest extends IntegrationTestSupport {
     @Test
     void validationFailWithName2() {
         // given
-        MemberJoinServiceRequest request = createMemberJoinRequest(
+        MemberJoinServiceRequest request = createJoinRequest(
                 "skdltm12",
                 "rkskek12#",
                 "김천재김천재김천재김천재김천재김",
@@ -670,7 +667,7 @@ class MemberServiceTest extends IntegrationTestSupport {
     @Test
     void validationSuccessWithAddress1() {
         // given
-        MemberJoinServiceRequest request = createMemberJoinRequest(
+        MemberJoinServiceRequest request = createJoinRequest(
                 "skdltm12",
                 "rkskek12#",
                 "김천",
@@ -713,7 +710,7 @@ class MemberServiceTest extends IntegrationTestSupport {
     @Test
     void validationSuccessWithAddress2() {
         // given
-        MemberJoinServiceRequest request = createMemberJoinRequest(
+        MemberJoinServiceRequest request = createJoinRequest(
                 "skdltm12",
                 "rkskek12#",
                 "김천",
@@ -762,7 +759,7 @@ class MemberServiceTest extends IntegrationTestSupport {
     @Test
     void validationFailWithAddress1() {
         // given
-        MemberJoinServiceRequest request = createMemberJoinRequest(
+        MemberJoinServiceRequest request = createJoinRequest(
                 "skdltm12",
                 "rkskek12#",
                 "김천재",
@@ -784,7 +781,7 @@ class MemberServiceTest extends IntegrationTestSupport {
     @Test
     void validationFailWithAddress2() {
         // given
-        MemberJoinServiceRequest request = createMemberJoinRequest(
+        MemberJoinServiceRequest request = createJoinRequest(
                 "skdltm12",
                 "rkskek12#",
                 "김천재",
@@ -806,9 +803,9 @@ class MemberServiceTest extends IntegrationTestSupport {
     }
 
 
-    private MemberJoinServiceRequest createMemberJoinRequest(String userId, String password, String name,
-                                                             String gender, String email, String address,
-                                                             String phoneNumber, String role) {
+    private MemberJoinServiceRequest createJoinRequest(String userId, String password, String name,
+                                                       String gender, String email, String address,
+                                                       String phoneNumber, String role) {
         return MemberJoinServiceRequest.builder()
                 .userId(userId)
                 .password(password)
