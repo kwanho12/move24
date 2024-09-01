@@ -29,12 +29,12 @@ public class DriverService {
     private final DriverRepository driverRepository;
 
     @Transactional
-    public void write(DriverPostServiceRequest request) {
+    public Driver post(DriverPostServiceRequest request) {
         Member member = memberRepository.findByUserId(request.getDriverId())
                 .orElseThrow(() -> new DriverNotFoundException("회원이 존재하지 않습니다."));
 
         Driver driver = Driver.create(member, request);
-        driverRepository.save(driver);
+        return driverRepository.save(driver);
     }
 
     public DriverOneResponse getOne(String driverId) {
@@ -59,8 +59,6 @@ public class DriverService {
                 })
                 .toList();
         return new PageImpl<>(content, pageable, pageResponse.getTotalElements());
-
-//        return driverRepository.getDrivers(condition, pageable);
     }
 
     /// 수정

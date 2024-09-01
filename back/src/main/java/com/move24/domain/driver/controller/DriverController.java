@@ -22,8 +22,7 @@ public class DriverController {
 
     @PostMapping("/api/drivers/new")
     public void post(@RequestBody DriverPostRequest request) {
-        log.info("data : " + request);
-        driverService.write(request.toServiceRequest());
+        driverService.post(request.toServiceRequest());
     }
 
     @GetMapping("/api/drivers/{driverId}")

@@ -51,6 +51,7 @@ public class Member extends DateEntity {
                 .details(memberDetails)
                 .build();
     }
+
     @Builder
     private Member(String userId, String password, Image image, MemberDetails details) {
         this.userId = userId;

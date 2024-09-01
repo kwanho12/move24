@@ -1,6 +1,6 @@
 package com.move24.domain.member.service;
 
-import com.move24.common.utils.ImageUtils;
+import com.move24.common.utils.ImageUtil;
 import com.move24.domain.member.dto.request.MemberJoinServiceRequest;
 import com.move24.domain.member.entity.image.Image;
 import com.move24.domain.member.entity.member.Member;
@@ -22,24 +22,28 @@ public class MemberService {
 
     private final MemberRepository memberRepository;
     private final ImageRepository imageRepository;
-    private final ImageUtils imageUtils;
+    private final ImageUtil imageUtil;
 
     @Value("${file.upload-dir}")
     private String uploadDir;
 
     @Transactional
-    public void signup(MemberJoinServiceRequest request, MultipartFile imageFile) {
+    public Member signup(MemberJoinServiceRequest request, MultipartFile imageFile) {
+
+        request.validate();
+
         if(memberRepository.existsByUserId(request.getUserId())) {
-            throw new IdAlreadyExistsException("이미 존재하는 아이디입니다.");
+            throw new IdAlreadyExistsException("이미 존재하는 아이디로 회원 가입할 수 없습니다.");
         }
 
         Image image = Image.create(imageFile);
         imageRepository.save(image);
 
         Member member = Member.create(request, image);
-        memberRepository.save(member);
+        Member savedMember = memberRepository.save(member);
 
-        imageUtils.upload(imageFile, image.getFileName(), uploadDir);
+        imageUtil.upload(imageFile, image.getFileName(), uploadDir);
+        return savedMember;
     }
     
     public void validateDuplicateId(String userId) {

@@ -47,14 +47,20 @@ class DriverRepositoryTest extends IntegrationTestSupport {
     @Autowired
     private ReviewRepository reviewRepository;
 
-    @DisplayName("회원 객체로 기사 객체를 조회한다.")
+    @DisplayName("회원 객체로 기사를 조회한다.")
     @Test
     void findByMember() {
         // given
-        Member member = createMember();
+        Member member = createMember(
+                "test1",
+                "김천재",
+                MALE,
+                "good@naver.com",
+                "010-5555-6666"
+        );
         memberRepository.save(member);
 
-        Driver driver = createDriver(member);
+        Driver driver = createDriver(member, 10, "믿고 맡겨 주십시오.");
         driverRepository.save(driver);
 
         // when
@@ -94,7 +100,7 @@ class DriverRepositoryTest extends IntegrationTestSupport {
                         "experienceYear",
                         "content",
                         "averagePoint")
-                .containsExactlyInAnyOrder(
+                .containsExactly(
                         "test1",
                         "김천재",
                         FEMALE,
@@ -110,11 +116,23 @@ class DriverRepositoryTest extends IntegrationTestSupport {
     @Test
     void getDriverOneWithAveragePoint() {
         // given
-        Member driverMember = createMember("test1");
-        Member reviewer = createMember("test2");
+        Member driverMember = createMember(
+                "test1",
+                "김천재",
+                MALE,
+                "good@naver.com",
+                "010-5555-6666"
+        );
+        Member reviewer = createMember(
+                "test2",
+                "김천재",
+                MALE,
+                "good@naver.com",
+                "010-5555-6666"
+        );
         memberRepository.saveAll(List.of(driverMember, reviewer));
 
-        Driver driver = createDriver(driverMember);
+        Driver driver = createDriver(driverMember, 10, "믿고 맡겨 주십시오.");
         driverRepository.save(driver);
 
         Review review1 = createReview(reviewer, driver, 3);
@@ -136,14 +154,32 @@ class DriverRepositoryTest extends IntegrationTestSupport {
         DriverSearchServiceCondition condition = DriverSearchServiceCondition.builder().build();
         Pageable pageable = PageRequest.of(0, 2);
 
-        Member member1 = createMember("test1", "김천재");
-        Member member2 = createMember("test2", "박천재");
-        Member member3 = createMember("test3", "최천재");
+        Member member1 = createMember(
+                "test1",
+                "김천재",
+                MALE,
+                "good@naver.com",
+                "010-5555-6666"
+        );
+        Member member2 = createMember(
+                "test2",
+                "박천재",
+                MALE,
+                "good@naver.com",
+                "010-5555-6666"
+        );
+        Member member3 = createMember(
+                "test3",
+                "최천재",
+                MALE,
+                "good@naver.com",
+                "010-5555-6666"
+        );
         memberRepository.saveAll(List.of(member1, member2, member3));
 
-        Driver driver1 = createDriver(member1, 10);
-        Driver driver2 = createDriver(member2, 20);
-        Driver driver3 = createDriver(member3, 30);
+        Driver driver1 = createDriver(member1, 10, "믿고 맡겨 주십시오.");
+        Driver driver2 = createDriver(member2, 20, "믿고 맡겨 주십시오.");
+        Driver driver3 = createDriver(member3, 30, "믿고 맡겨 주십시오.");
         driverRepository.saveAll(List.of(driver1, driver2, driver3));
 
         // when
@@ -152,7 +188,7 @@ class DriverRepositoryTest extends IntegrationTestSupport {
         // then
         assertThat(drivers).hasSize(2)
                 .extracting("driverId", "name", "experienceYear", "averagePoint")
-                .containsExactlyInAnyOrder(
+                .containsExactly(
                         tuple("test1", "김천재", 10, null),
                         tuple("test2", "박천재", 20, null)
                 );
@@ -201,11 +237,11 @@ class DriverRepositoryTest extends IntegrationTestSupport {
         );
         memberRepository.saveAll(List.of(member1, member2, member3, member4, member5));
 
-        Driver driver1 = createDriver(member1, 10);
-        Driver driver2 = createDriver(member2, 20);
-        Driver driver3 = createDriver(member3, 30);
-        Driver driver4 = createDriver(member4, 40);
-        Driver driver5 = createDriver(member5, 50);
+        Driver driver1 = createDriver(member1, 10, "믿고 맡겨 주십시오.");
+        Driver driver2 = createDriver(member2, 20, "믿고 맡겨 주십시오.");
+        Driver driver3 = createDriver(member3, 30, "믿고 맡겨 주십시오.");
+        Driver driver4 = createDriver(member4, 40, "믿고 맡겨 주십시오.");
+        Driver driver5 = createDriver(member5, 50, "믿고 맡겨 주십시오.");
         driverRepository.saveAll(List.of(driver1, driver2, driver3, driver4, driver5));
 
         // when
@@ -214,7 +250,7 @@ class DriverRepositoryTest extends IntegrationTestSupport {
         // then
         assertThat(drivers).hasSize(3)
                 .extracting("driverId", "name", "experienceYear", "averagePoint")
-                .containsExactlyInAnyOrder(
+                .containsExactly(
                         tuple("test1", "김천재", 10, null),
                         tuple("test2", "김천재", 20, null),
                         tuple("test3", "김천재", 30, null)
@@ -263,11 +299,11 @@ class DriverRepositoryTest extends IntegrationTestSupport {
         );
         memberRepository.saveAll(List.of(member1, member2, member3, member4, member5));
 
-        Driver driver1 = createDriver(member1, 10);
-        Driver driver2 = createDriver(member2, 20);
-        Driver driver3 = createDriver(member3, 30);
-        Driver driver4 = createDriver(member4, 40);
-        Driver driver5 = createDriver(member5, 50);
+        Driver driver1 = createDriver(member1, 10, "믿고 맡겨 주십시오.");
+        Driver driver2 = createDriver(member2, 20, "믿고 맡겨 주십시오.");
+        Driver driver3 = createDriver(member3, 30, "믿고 맡겨 주십시오.");
+        Driver driver4 = createDriver(member4, 40, "믿고 맡겨 주십시오.");
+        Driver driver5 = createDriver(member5, 50, "믿고 맡겨 주십시오.");
         driverRepository.saveAll(List.of(driver1, driver2, driver3, driver4, driver5));
 
         // when
@@ -276,7 +312,7 @@ class DriverRepositoryTest extends IntegrationTestSupport {
         // then
         assertThat(drivers).hasSize(3)
                 .extracting("driverId", "name", "experienceYear")
-                .containsExactlyInAnyOrder(
+                .containsExactly(
                         tuple("test3", "김천재", 30),
                         tuple("test4", "김천재", 40),
                         tuple("test5", "김천재", 50)
@@ -329,11 +365,11 @@ class DriverRepositoryTest extends IntegrationTestSupport {
         );
         memberRepository.saveAll(List.of(member1, member2, member3, member4, member5));
 
-        Driver driver1 = createDriver(member1, 10);
-        Driver driver2 = createDriver(member2, 20);
-        Driver driver3 = createDriver(member3, 30);
-        Driver driver4 = createDriver(member4, 40);
-        Driver driver5 = createDriver(member5, 50);
+        Driver driver1 = createDriver(member1, 10, "믿고 맡겨 주십시오.");
+        Driver driver2 = createDriver(member2, 20, "믿고 맡겨 주십시오.");
+        Driver driver3 = createDriver(member3, 30, "믿고 맡겨 주십시오.");
+        Driver driver4 = createDriver(member4, 40, "믿고 맡겨 주십시오.");
+        Driver driver5 = createDriver(member5, 50, "믿고 맡겨 주십시오.");
         driverRepository.saveAll(List.of(driver1, driver2, driver3, driver4, driver5));
 
         // when
@@ -342,7 +378,7 @@ class DriverRepositoryTest extends IntegrationTestSupport {
         // then
         assertThat(drivers).hasSize(2)
                 .extracting("driverId", "name", "experienceYear")
-                .containsExactlyInAnyOrder(
+                .containsExactly(
                         tuple("test2", "김천재", 20),
                         tuple("test4", "김천재", 40)
                 );
@@ -394,11 +430,11 @@ class DriverRepositoryTest extends IntegrationTestSupport {
         );
         memberRepository.saveAll(List.of(member1, member2, member3, member4, member5));
 
-        Driver driver1 = createDriver(member1, 10);
-        Driver driver2 = createDriver(member2, 20);
-        Driver driver3 = createDriver(member3, 30);
-        Driver driver4 = createDriver(member4, 40);
-        Driver driver5 = createDriver(member5, 50);
+        Driver driver1 = createDriver(member1, 10, "믿고 맡겨 주십시오.");
+        Driver driver2 = createDriver(member2, 20, "믿고 맡겨 주십시오.");
+        Driver driver3 = createDriver(member3, 30, "믿고 맡겨 주십시오.");
+        Driver driver4 = createDriver(member4, 40, "믿고 맡겨 주십시오.");
+        Driver driver5 = createDriver(member5, 50, "믿고 맡겨 주십시오.");
         driverRepository.saveAll(List.of(driver1, driver2, driver3, driver4, driver5));
 
         // when
@@ -407,7 +443,7 @@ class DriverRepositoryTest extends IntegrationTestSupport {
         // then
         assertThat(drivers).hasSize(3)
                 .extracting("driverId", "name", "experienceYear")
-                .containsExactlyInAnyOrder(
+                .containsExactly(
                         tuple("test2", "김천재", 20),
                         tuple("test4", "김천재", 40),
                         tuple("test5", "김천재", 50)
@@ -461,11 +497,11 @@ class DriverRepositoryTest extends IntegrationTestSupport {
         );
         memberRepository.saveAll(List.of(member1, member2, member3, member4, member5));
 
-        Driver driver1 = createDriver(member1, 10);
-        Driver driver2 = createDriver(member2, 20);
-        Driver driver3 = createDriver(member3, 30);
-        Driver driver4 = createDriver(member4, 40);
-        Driver driver5 = createDriver(member5, 50);
+        Driver driver1 = createDriver(member1, 10, "믿고 맡겨 주십시오.");
+        Driver driver2 = createDriver(member2, 20, "믿고 맡겨 주십시오.");
+        Driver driver3 = createDriver(member3, 30, "믿고 맡겨 주십시오.");
+        Driver driver4 = createDriver(member4, 40, "믿고 맡겨 주십시오.");
+        Driver driver5 = createDriver(member5, 50, "믿고 맡겨 주십시오.");
         driverRepository.saveAll(List.of(driver1, driver2, driver3, driver4, driver5));
 
         // when
@@ -474,7 +510,7 @@ class DriverRepositoryTest extends IntegrationTestSupport {
         // then
         assertThat(drivers).hasSize(2)
                 .extracting("driverId", "name", "experienceYear")
-                .containsExactlyInAnyOrder(
+                .containsExactly(
                         tuple("test2", "김천재", 20),
                         tuple("test4", "김천재", 40)
                 );
@@ -487,13 +523,37 @@ class DriverRepositoryTest extends IntegrationTestSupport {
         Pageable pageable = PageRequest.of(0, 2);
         DriverSearchServiceCondition condition = DriverSearchServiceCondition.builder().build();
 
-        Member driverMember = createMember("test1", "김천재");
-        Member reviewer1 = createMember("test2", "조천재");
-        Member reviewer2 = createMember("test3", "황천재");
-        Member reviewer3 = createMember("test4", "양천재");
+        Member driverMember = createMember(
+                "test1",
+                "김천재",
+                MALE,
+                "good@naver.com",
+                "010-5555-6666"
+        );
+        Member reviewer1 = createMember(
+                "test2",
+                "조천재",
+                MALE,
+                "good@naver.com",
+                "010-5555-6666"
+        );
+        Member reviewer2 = createMember(
+                "test3",
+                "황천재",
+                MALE,
+                "good@naver.com",
+                "010-5555-6666"
+        );
+        Member reviewer3 = createMember(
+                "test4",
+                "양천재",
+                MALE,
+                "good@naver.com",
+                "010-5555-6666"
+        );
         memberRepository.saveAll(List.of(driverMember, reviewer1, reviewer2, reviewer3));
 
-        Driver driver1 = createDriver(driverMember, 10);
+        Driver driver1 = createDriver(driverMember, 10, "믿고 맡겨 주십시오.");
         driverRepository.save(driver1);
 
         Review review1 = createReview(reviewer1, driver1, 5);
@@ -507,7 +567,7 @@ class DriverRepositoryTest extends IntegrationTestSupport {
         // then
         assertThat(drivers).hasSize(1)
                 .extracting("driverId", "name", "experienceYear" ,"averagePoint")
-                .containsExactlyInAnyOrder(
+                .containsExactly(
                         tuple("test1", "김천재", 10, 3.0)
                 );
     }
@@ -522,69 +582,6 @@ class DriverRepositoryTest extends IntegrationTestSupport {
 
         return Image.builder()
                 .imageFile(file)
-                .build();
-    }
-
-    private Member createMember() {
-        Image image = createImage();
-        imageRepository.save(image);
-
-        MemberDetails memberDetails = MemberDetails.builder()
-                .gender(MALE)
-                .name("김천재")
-                .mail("skdltm@naver.com")
-                .phoneNumber("010-1234-5678")
-                .address("서울시 양산길 21 305호")
-                .role(ROLE_DRIVER)
-                .build();
-
-        return Member.builder()
-                .userId("test1")
-                .password("rkskek12#")
-                .image(image)
-                .details(memberDetails)
-                .build();
-    }
-
-    private Member createMember(String userId) {
-        Image image = createImage();
-        imageRepository.save(image);
-
-        MemberDetails memberDetails = MemberDetails.builder()
-                .gender(MALE)
-                .name("김천재")
-                .mail("skdltm@naver.com")
-                .phoneNumber("010-1234-5678")
-                .address("서울시 양산길 21 305호")
-                .role(ROLE_DRIVER)
-                .build();
-
-        return Member.builder()
-                .userId(userId)
-                .password("rkskek12#")
-                .image(image)
-                .details(memberDetails)
-                .build();
-    }
-
-    private Member createMember(String userId, String name) {
-        Image image = createImage();
-        imageRepository.save(image);
-
-        MemberDetails memberDetails = MemberDetails.builder()
-                .gender(MALE)
-                .name(name)
-                .mail("skdltm@naver.com")
-                .phoneNumber("010-1234-5678")
-                .address("서울시 양산길 21 305호")
-                .role(ROLE_DRIVER)
-                .build();
-
-        return Member.builder()
-                .userId(userId)
-                .password("rkskek12#")
-                .image(image)
-                .details(memberDetails)
                 .build();
     }
 
@@ -610,22 +607,6 @@ class DriverRepositoryTest extends IntegrationTestSupport {
                 .build();
     }
 
-    private Driver createDriver(Member member) {
-        return Driver.builder()
-                .member(member)
-                .experienceYear(10)
-                .content("믿고 맡겨 주십시오.")
-                .build();
-    }
-
-    private Driver createDriver(Member member, int experienceYear) {
-        return Driver.builder()
-                .member(member)
-                .experienceYear(experienceYear)
-                .content("믿고 맡겨 주십시오.")
-                .build();
-    }
-
     private Driver createDriver(Member member, int experienceYear, String content) {
         return Driver.builder()
                 .member(member)
@@ -643,5 +624,4 @@ class DriverRepositoryTest extends IntegrationTestSupport {
                 .point(point)
                 .build();
     }
-
 }

@@ -11,6 +11,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.UUID;
 
 import static com.move24.domain.member.entity.image.Extension.isValidExtension;
@@ -61,9 +62,7 @@ public class Image {
     }
 
     private void isValidFile(MultipartFile imageFile) {
-        if (imageFile.isEmpty()) {
-            throw new FileNotFoundException("파일이 업로드되지 않았습니다.");
-        }
+        Optional.ofNullable(imageFile).orElseThrow(() -> new FileNotFoundException("파일이 업로드되지 않았습니다."));
     }
 
     public static Image create(MultipartFile imageFile) {

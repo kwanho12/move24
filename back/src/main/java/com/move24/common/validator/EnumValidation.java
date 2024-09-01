@@ -1,4 +1,4 @@
-package com.move24.common.utils.validator;
+package com.move24.common.validator;
 
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;

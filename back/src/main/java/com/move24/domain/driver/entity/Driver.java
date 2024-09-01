@@ -2,7 +2,9 @@ package com.move24.domain.driver.entity;
 
 import com.move24.common.entity.DateEntity;
 import com.move24.domain.driver.dto.request.DriverPostServiceRequest;
+import com.move24.domain.driver.exception.RoleNotValidException;
 import com.move24.domain.member.entity.member.Member;
+import com.move24.domain.member.entity.member.Role;
 import com.move24.domain.review.entity.Review;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -35,6 +37,9 @@ public class Driver extends DateEntity {
     }
 
     public static Driver create(Member member, DriverPostServiceRequest request) {
+        if (member.getDetails().getRole() == Role.ROLE_USER) {
+            throw new RoleNotValidException("기사만 게시글 작성이 가능합니다.");
+        }
         return Driver.builder()
                 .member(member)
                 .experienceYear(request.getExperienceYear())

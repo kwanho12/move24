@@ -8,7 +8,7 @@ import java.io.File;
 import java.io.IOException;
 
 @Component
-public class ImageUtils {
+public class ImageUtil {
     public void upload(MultipartFile imageFile, String fileName, String uploadDir) {
         String filePath = uploadDir + "/" + fileName;
         try {

@@ -7,26 +7,24 @@ import org.springframework.http.HttpStatus;
 public class ApiResponse<T> {
 
     private final int code;
-    private final HttpStatus status;
     private final String message;
-    private final T data;
+    private final T responseData;
 
-    public ApiResponse(HttpStatus status, String message, T data) {
+    public ApiResponse(HttpStatus status, String message, T responseData) {
         this.code = status.value();
-        this.status = status;
         this.message = message;
-        this.data = data;
+        this.responseData = responseData;
     }
 
-    public static <T> ApiResponse<T> of(HttpStatus httpStatus, String message, T data) {
-        return new ApiResponse<>(httpStatus, message, data);
+    public static <T> ApiResponse<T> of(HttpStatus httpStatus, String message, T responseData) {
+        return new ApiResponse<>(httpStatus, message, responseData);
     }
 
-    public static <T> ApiResponse<T> of(HttpStatus httpStatus, T data) {
-        return of(httpStatus, httpStatus.name(), data);
+    public static <T> ApiResponse<T> of(HttpStatus httpStatus, T responseData) {
+        return of(httpStatus, httpStatus.name(), responseData);
     }
 
-    public static <T> ApiResponse<T> ok(T data) {
-        return of(HttpStatus.OK, data);
+    public static <T> ApiResponse<T> ok(T responseData) {
+        return of(HttpStatus.OK, responseData);
     }
 }

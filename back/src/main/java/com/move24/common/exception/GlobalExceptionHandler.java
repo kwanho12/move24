@@ -1,9 +1,6 @@
 package com.move24.common.exception;
 
-import com.move24.common.response.ErrorResponse;
-import com.move24.common.response.ValidationErrorResponse;
-import com.move24.domain.driver.exception.DriverNotFoundException;
-import com.move24.domain.member.exception.*;
+import com.move24.common.response.ApiResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindException;
@@ -12,35 +9,47 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import java.util.Map;
+import java.util.stream.Collectors;
+
+
 @Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(BindException.class)
-    public ValidationErrorResponse MethodArgumentNotValidExceptionHandler(BindException e) {
-        ValidationErrorResponse response = ValidationErrorResponse.builder()
-                .code("400")
-                .message("검증 오류입니다.")
-                .build();
+    public ApiResponse<Map<String, String>> BindExceptionHandler(BindException e) {
+        Map<String, String> validErrors = e.getFieldErrors().stream()
+                .collect(Collectors.toMap(
+                        FieldError::getField,
+                        fieldError -> fieldError.getDefaultMessage()
+                ));
 
-        for (FieldError fieldError : e.getFieldErrors()) {
-            response.addValidation(fieldError.getField(), fieldError.getDefaultMessage());
-        }
-        return response;
+        return ApiResponse.of(
+                HttpStatus.BAD_REQUEST,
+                "parameter 미입력 검증 오류입니다.",
+                validErrors
+        );
+    }
+
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(BusinessPolicyValidationException.class)
+    public ApiResponse<BusinessPolicyValidErrorResponse> businessPolicyValidationExceptionHandler(
+            BusinessPolicyValidationException e) {
+        return ApiResponse.of(
+                HttpStatus.BAD_REQUEST,
+                "정규식 검증 오류입니다.",
+                e.getBusinessPolicyValidErrorResponse()
+        );
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler({ExtensionNotMatchException.class,
-            GenderNotValidException.class,
-            IdAlreadyExistsException.class,
-            FileNotFoundException.class,
-            ImageNotSaveException.class,
-            DriverNotFoundException.class})
-    public ErrorResponse runtimeExceptionHandler(RuntimeException e) {
-        return ErrorResponse.builder()
-                .code("400")
-                .message(e.getMessage())
-                .build();
+    @ExceptionHandler(CommonException.class)
+    public ApiResponse<Object> commonExceptionHandler(CommonException e) {
+        return ApiResponse.of(HttpStatus.BAD_REQUEST,
+                e.getMessage(),
+                null);
     }
 }

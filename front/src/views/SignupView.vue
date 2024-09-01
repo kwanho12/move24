@@ -88,14 +88,17 @@ const register = async () => {
       router.replace("/");
     }
   } catch (error) {
-    errorId.value = error.response.data.validation.userId;
-    errorPassword.value = error.response.data.validation.password;
-    errorName.value = error.response.data.validation.name;
-    errorGender.value = error.response.data.validation.gender;
-    errorMail.value = error.response.data.validation.mail;
-    errorAddress.value = error.response.data.validation.address;
-    errorPhoneNumber.value = error.response.data.validation.phoneNumber;
-    errorRole.value = error.response.data.validation.role;
+    if(error.response.data.responseData.field) {
+      alert(error.response.data.responseData.message)
+    }
+    errorId.value = error.response.data.responseData.userId;
+    errorPassword.value = error.response.data.responseData.password;
+    errorName.value = error.response.data.responseData.name;
+    errorGender.value = error.response.data.responseData.gender;
+    errorMail.value = error.response.data.responseData.mail;
+    errorAddress.value = error.response.data.responseData.address;
+    errorPhoneNumber.value = error.response.data.responseData.phoneNumber;
+    errorRole.value = error.response.data.responseData.role;
     errorImage.value = error.response.data.message;
     console.log(
       "회원가입 오류: ",

@@ -80,12 +80,6 @@ public class DriverRepositoryImpl implements DriverRepositoryCustom {
                 .limit(pageable.getPageSize())
                 .fetch();
 
-//        content.forEach(driversResponse -> {
-//            if (driversResponse.getAveragePoint() == null) {
-//                driversResponse.setAveragePoint(0.0);
-//            }
-//        });
-
         JPAQuery<Long> countQuery = queryFactory
                 .select(Wildcard.count)
                 .from(driver)

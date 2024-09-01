@@ -12,7 +12,7 @@ public enum Extension {
                 .anyMatch(value -> value.name().equalsIgnoreCase(extension));
 
         if (!isValid) {
-            throw new ExtensionNotMatchException(extension.substring(1) + "은(는) 이미지 확장자가 아닙니다.");
+            throw new ExtensionNotMatchException(extension + "은(는) 이미지 확장자가 아닙니다.");
         }
     }
 
