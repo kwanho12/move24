@@ -32,8 +32,9 @@ public class Driver extends DateEntity {
     @OneToOne(mappedBy = "driver", fetch = FetchType.LAZY)
     private Review review;
 
-    public void change() {
-
+    public void update(Integer experienceYear, String content) {
+        this.experienceYear = experienceYear;
+        this.content = content;
     }
 
     public static Driver create(Member member, DriverPostServiceRequest request) {

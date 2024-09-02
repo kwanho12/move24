@@ -10,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -21,7 +22,7 @@ public class DriverController {
     private final DriverService driverService;
 
     @PostMapping("/api/drivers/new")
-    public void post(@RequestBody DriverPostRequest request) {
+    public void post(@RequestBody @Validated DriverPostRequest request) {
         driverService.post(request.toServiceRequest());
     }
 
@@ -31,7 +32,7 @@ public class DriverController {
     }
 
     @GetMapping("/api/drivers")
-    public Page<DriversResponse> getDrivers(DriverSearchCondition condition,
+    public Page<DriversResponse> getDrivers(@Validated DriverSearchCondition condition,
                                             @PageableDefault(size = 6) Pageable pageable) {
         return driverService.getList(condition.toServiceRequest(), pageable);
     }

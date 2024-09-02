@@ -262,7 +262,7 @@ class DriverRepositoryTest extends IntegrationTestSupport {
     void getDriversWithOneSearchCondition2() {
         // given
         DriverSearchServiceCondition condition = DriverSearchServiceCondition.builder()
-                .gender(FEMALE)
+                .gender("FEMALE")
                 .build();
         Pageable pageable = PageRequest.of(0, 3);
 
@@ -455,7 +455,7 @@ class DriverRepositoryTest extends IntegrationTestSupport {
     void getPagedDriversWithSeveralSearchCondition() {
         // given
         DriverSearchServiceCondition condition = DriverSearchServiceCondition.builder()
-                .gender(FEMALE)
+                .gender("FEMALE")
                 .phoneNumber("010-5555-7777")
                 .build();
         Pageable pageable = PageRequest.of(0, 2);

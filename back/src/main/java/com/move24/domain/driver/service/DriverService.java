@@ -30,6 +30,8 @@ public class DriverService {
 
     @Transactional
     public Driver post(DriverPostServiceRequest request) {
+        request.validateBusinessPolicyException();
+
         Member member = memberRepository.findByUserId(request.getDriverId())
                 .orElseThrow(() -> new DriverNotFoundException("회원이 존재하지 않습니다."));
 
@@ -62,15 +64,15 @@ public class DriverService {
     }
 
     /// 수정
-    public void updateDriver(String driverId) {
-
-        Member member = memberRepository.findByUserId(driverId)
-                .orElseThrow(() -> new DriverNotFoundException("회원이 존재하지 않습니다."));
-
-        Driver driver = driverRepository.findByMember(member)
-                .orElseThrow(() -> new DriverNotFoundException("존재하지 않는 기사입니다."));
-
-//        return DriverOneResponse.builder().build();
-
-    }
+//    public void updateDriver(UpdateDriverPostServiceRequest request) {
+//
+//        Member member = memberRepository.findByUserId(driverId)
+//                .orElseThrow(() -> new DriverNotFoundException("회원이 존재하지 않습니다."));
+//
+//        Driver driver = driverRepository.findByMember(member)
+//                .orElseThrow(() -> new DriverNotFoundException("존재하지 않는 기사입니다."));
+//
+//        driver.update();
+//
+//    }
 }

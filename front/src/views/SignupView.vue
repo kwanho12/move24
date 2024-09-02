@@ -161,6 +161,9 @@ watch(userId, () => {
                   placeholder="이름"
                   required
                 />
+                <div class="form-text" v-if="errorName">
+                {{ errorName }}
+                </div>
               </div>
               <div class="col-sm-6">
                 <select class="form-select" v-model="gender" required>
@@ -168,12 +171,9 @@ watch(userId, () => {
                   <option value="MALE">남성</option>
                   <option value="FEMALE">여성</option>
                 </select>
-              </div>
-              <div class="col-6 form-text" v-if="errorName">
-                {{ errorName }}
-              </div>
-              <div class="col-6 form-text" v-if="errorGender">
+                <div class="form-text" v-if="errorGender">
                 {{ errorGender }}
+                </div>
               </div>
               <div class="col-12">
                 <input
@@ -205,6 +205,9 @@ watch(userId, () => {
                   v-model="phoneNumber"
                   placeholder="휴대폰 번호(ex: 010-1234-5678)"
                 />
+                <div class="form-text" v-if="errorPhoneNumber">
+                 {{ errorPhoneNumber }}
+                </div>
               </div>
               <div class="col-sm-6">
                 <select class="form-select" v-model="role" required>
@@ -212,13 +215,12 @@ watch(userId, () => {
                   <option value="ROLE_USER">사용자</option>
                   <option value="ROLE_DRIVER">기사</option>
                 </select>
+                <div class="form-text" v-if="errorRole">
+                  {{ errorRole }}
+                </div>
               </div>
-              <div class="col-sm-6 form-text" v-if="errorPhoneNumber">
-                {{ errorPhoneNumber }}
-              </div>
-              <div class="col-sm-6 form-text" v-if="errorRole">
-                {{ errorRole }}
-              </div>
+              
+              
               <div class="col-12">
                 <label for="image" class="mb-3">이미지</label>
                 <input

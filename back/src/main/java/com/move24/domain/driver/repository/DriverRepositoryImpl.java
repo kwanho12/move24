@@ -97,8 +97,8 @@ public class DriverRepositoryImpl implements DriverRepositoryCustom {
         return nameCond != null ? member.details.name.contains(nameCond) : null;
     }
 
-    private BooleanExpression genderEq(Gender genderCond) {
-        return genderCond != null ? member.details.gender.eq(genderCond) : null;
+    private BooleanExpression genderEq(String genderCond) {
+        return genderCond != null ? member.details.gender.eq(Gender.valueOf(genderCond)) : null;
     }
 
     private BooleanExpression mailContains(String mailCond) {

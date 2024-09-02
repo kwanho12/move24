@@ -1,6 +1,7 @@
 package com.move24.domain.driver.service;
 
 import com.move24.IntegrationTestSupport;
+import com.move24.common.exception.BusinessPolicyValidationException;
 import com.move24.domain.driver.dto.request.DriverPostServiceRequest;
 import com.move24.domain.driver.dto.request.DriverSearchServiceCondition;
 import com.move24.domain.driver.dto.response.DriverOneResponse;
@@ -53,10 +54,18 @@ class DriverServiceTest extends IntegrationTestSupport {
     @Test
     void post() {
         // given
-        Member member = createMember("test1", ROLE_DRIVER);
+        Member member = createMember(
+                "test1",
+                "김천재",
+                MALE,
+                "skdltm@naver.com",
+                "010-2222-2222",
+                ROLE_DRIVER
+        );
         memberRepository.save(member);
 
-        DriverPostServiceRequest request = createDriverPostRequest("test1");
+        DriverPostServiceRequest request = createDriverPostRequest("test1", 10,
+                "빠르고 신속한 서비스를 제공합니다.");
 
         // when
         Driver postedDriver = driverService.post(request);
@@ -67,12 +76,20 @@ class DriverServiceTest extends IntegrationTestSupport {
 
     @DisplayName("기사가 아닌 일반 회원은 기사 등록 게시물을 올릴 수 없다.")
     @Test
-    void postRoleNotValid() {
+    void postWithWrongRole() {
         // given
-        Member member = createMember("test1", ROLE_USER);
+        Member member = createMember(
+                "test1",
+                "김천재",
+                MALE,
+                "skdltm@naver.com",
+                "010-2222-2222",
+                ROLE_USER
+        );
         memberRepository.save(member);
 
-        DriverPostServiceRequest request = createDriverPostRequest("test1");
+        DriverPostServiceRequest request = createDriverPostRequest("test1", 10,
+                "빠르고 신속한 서비스를 제공합니다.");
 
         // when, then
         assertThatThrownBy(() -> driverService.post(request))
@@ -80,16 +97,111 @@ class DriverServiceTest extends IntegrationTestSupport {
                 .hasMessage("기사만 게시글 작성이 가능합니다.");
     }
 
-    @DisplayName("기사 게시글 1개를 조회할 때 기사의 후기가 없다면 후기 점수는 0.0점이다.")
+    @DisplayName("경력은 0~100년 까지만 입력 가능하다.")
     @Test
-    void getOneNotExistReview() {
+    void postWithCorrectExperienceYear1() {
         // given
         Member member = createMember(
                 "test1",
                 "김천재",
                 MALE,
                 "skdltm@naver.com",
-                "010-2222-2222"
+                "010-2222-2222",
+                ROLE_DRIVER
+        );
+        memberRepository.save(member);
+
+        DriverPostServiceRequest request = createDriverPostRequest("test1", 0,
+                "빠르고 신속한 서비스를 제공합니다.");
+
+        // when
+        Driver postedDriver = driverService.post(request);
+
+        // then
+        assertThat(postedDriver.getMember()).isEqualTo(member);
+    }
+
+    @DisplayName("경력은 0~100년 까지만 입력 가능하다.")
+    @Test
+    void postWithCorrectExperienceYear2() {
+        // given
+        Member member = createMember(
+                "test1",
+                "김천재",
+                MALE,
+                "skdltm@naver.com",
+                "010-2222-2222",
+                ROLE_DRIVER
+        );
+        memberRepository.save(member);
+
+        DriverPostServiceRequest request = createDriverPostRequest("test1", 100,
+                "빠르고 신속한 서비스를 제공합니다.");
+
+        // when
+        Driver postedDriver = driverService.post(request);
+
+        // then
+        assertThat(postedDriver.getMember()).isEqualTo(member);
+    }
+
+    @DisplayName("경력은 0~100년 까지만 입력 가능하다.")
+    @Test
+    void postWithWrongExperienceYear1() {
+        // given
+        Member member = createMember(
+                "test1",
+                "김천재",
+                MALE,
+                "skdltm@naver.com",
+                "010-2222-2222",
+                ROLE_USER
+        );
+        memberRepository.save(member);
+
+        DriverPostServiceRequest request = createDriverPostRequest("test1", -1,
+                "빠르고 신속한 서비스를 제공합니다.");
+
+        // when, then
+        assertThatThrownBy(() -> driverService.post(request))
+                .isInstanceOf(BusinessPolicyValidationException.class)
+                .hasMessage("경력은 0~100년까지 입력 가능합니다.");
+    }
+
+    @DisplayName("경력은 0~100년 까지만 입력 가능하다.")
+    @Test
+    void postWithWrongExperienceYear2() {
+        // given
+        Member member = createMember(
+                "test1",
+                "김천재",
+                MALE,
+                "skdltm@naver.com",
+                "010-2222-2222",
+                ROLE_USER
+        );
+        memberRepository.save(member);
+
+        DriverPostServiceRequest request = createDriverPostRequest("test1", 101,
+                "빠르고 신속한 서비스를 제공합니다.");
+
+        // when, then
+        assertThatThrownBy(() -> driverService.post(request))
+                .isInstanceOf(BusinessPolicyValidationException.class)
+                .hasMessage("경력은 0~100년까지 입력 가능합니다.");
+    }
+
+    @DisplayName("기사 게시글 1개를 조회할 때 기사의 후기가 없다면 후기 점수는 0.0점이다.")
+    @Test
+    void getOneWithoutReview() {
+        // given
+        Member member = createMember(
+                "test1",
+                "김천재",
+                MALE,
+                "skdltm@naver.com",
+                "010-2222-2222",
+                ROLE_DRIVER
         );
         memberRepository.save(member);
 
@@ -123,14 +235,15 @@ class DriverServiceTest extends IntegrationTestSupport {
 
     @DisplayName("여러 개의 기사 게시글을 조회할 때 기사의 후기가 없다면 후기 점수는 0.0점이다.")
     @Test
-    void getListNotExistReview() {
+    void getListWithoutReview() {
         // given
         Member member = createMember(
                 "test1",
                 "김천재",
                 MALE,
                 "skdltm@naver.com",
-                "010-2222-2222"
+                "010-2222-2222",
+                ROLE_DRIVER
         );
         memberRepository.save(member);
 
@@ -147,11 +260,12 @@ class DriverServiceTest extends IntegrationTestSupport {
         assertThat(response.getContent().get(0).getAveragePoint()).isEqualTo(0.0);
     }
 
-    private DriverPostServiceRequest createDriverPostRequest(String driverId) {
+    private DriverPostServiceRequest createDriverPostRequest(String driverId, Integer experienceYear,
+                                                             String content) {
         return DriverPostServiceRequest.builder()
                 .driverId(driverId)
-                .experienceYear(10)
-                .content("빠르고 신속한 서비스를 제공합니다.")
+                .experienceYear(experienceYear)
+                .content(content)
                 .build();
     }
 
@@ -168,29 +282,8 @@ class DriverServiceTest extends IntegrationTestSupport {
                 .build();
     }
 
-    private Member createMember(String userId, Role role) {
-        Image image = createImage();
-        imageRepository.save(image);
-
-        MemberDetails memberDetails = MemberDetails.builder()
-                .gender(MALE)
-                .name("김천재")
-                .mail("skdltm@naver.com")
-                .phoneNumber("010-1234-5678")
-                .address("서울시 양산길 21 305호")
-                .role(role)
-                .build();
-
-        return Member.builder()
-                .userId(userId)
-                .password("rkskek12#")
-                .image(image)
-                .details(memberDetails)
-                .build();
-    }
-
     private Member createMember(String userId, String name, Gender gender,
-                                String email, String phoneNumber) {
+                                String email, String phoneNumber, Role role) {
         Image image = createImage();
         imageRepository.save(image);
 
@@ -200,7 +293,7 @@ class DriverServiceTest extends IntegrationTestSupport {
                 .mail(email)
                 .phoneNumber(phoneNumber)
                 .address("서울시 양산길 21 305호")
-                .role(ROLE_DRIVER)
+                .role(role)
                 .build();
 
         return Member.builder()

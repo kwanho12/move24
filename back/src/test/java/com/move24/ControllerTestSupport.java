@@ -1,4 +1,4 @@
-package com.move24.domain;
+package com.move24;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.move24.domain.driver.controller.DriverController;

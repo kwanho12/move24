@@ -1,6 +1,5 @@
 package com.move24.domain.driver.dto.request;
 
-import com.move24.domain.member.entity.member.Gender;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -8,12 +7,12 @@ import lombok.Getter;
 public class DriverSearchServiceCondition {
 
     private final String name;
-    private final Gender gender;
+    private final String gender;
     private final String mail;
     private final String phoneNumber;
 
     @Builder
-    private DriverSearchServiceCondition(String name, Gender gender, String mail, String phoneNumber) {
+    private DriverSearchServiceCondition(String name, String gender, String mail, String phoneNumber) {
         this.name = name;
         this.gender = gender;
         this.mail = mail;

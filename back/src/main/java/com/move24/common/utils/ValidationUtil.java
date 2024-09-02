@@ -28,4 +28,10 @@ public class ValidationUtil {
             throw new BusinessPolicyValidationException(message, field);
         }
     }
+
+    public static void validateExperienceYear(String field, int parameter, String message) {
+        if (parameter < 0 || parameter > 100) {
+            throw new BusinessPolicyValidationException(message, field);
+        }
+    }
 }

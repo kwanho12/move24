@@ -1,6 +1,6 @@
 package com.move24.domain.member.controller;
 
-import com.move24.domain.ControllerTestSupport;
+import com.move24.ControllerTestSupport;
 import com.move24.domain.member.dto.request.MemberJoinRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
