@@ -24,7 +24,6 @@ const errorMail = ref("");
 const errorAddress = ref("");
 const errorPhoneNumber = ref("");
 const errorRole = ref("");
-const errorImage = ref("");
 
 const onFileChange = (event) => {
   file.value = event.target.files[0];
@@ -88,9 +87,14 @@ const register = async () => {
       router.replace("/");
     }
   } catch (error) {
+    console.log(
+      "회원가입 오류: ",
+      error.response ? error.response.data : error.message
+    );
     if(error.response.data.responseData.field) {
       alert(error.response.data.responseData.message)
     }
+    idCheckMessage.value = "";
     errorId.value = error.response.data.responseData.userId;
     errorPassword.value = error.response.data.responseData.password;
     errorName.value = error.response.data.responseData.name;
@@ -99,11 +103,7 @@ const register = async () => {
     errorAddress.value = error.response.data.responseData.address;
     errorPhoneNumber.value = error.response.data.responseData.phoneNumber;
     errorRole.value = error.response.data.responseData.role;
-    errorImage.value = error.response.data.message;
-    console.log(
-      "회원가입 오류: ",
-      error.response ? error.response.data : error.message
-    );
+    
   }
 };
 

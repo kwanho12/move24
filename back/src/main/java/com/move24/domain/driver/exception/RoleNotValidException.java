@@ -1,12 +1,11 @@
 package com.move24.domain.driver.exception;
 
-import lombok.NoArgsConstructor;
+import com.move24.common.exception.CommonException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
-@NoArgsConstructor
 @ResponseStatus(HttpStatus.BAD_REQUEST)
-public class RoleNotValidException extends RuntimeException{
+public class RoleNotValidException extends CommonException {
 
     public RoleNotValidException(String message) {
         super(message);

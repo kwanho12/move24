@@ -29,9 +29,7 @@ public class MemberService {
 
     @Transactional
     public Member signup(MemberJoinServiceRequest request, MultipartFile imageFile) {
-
-        request.validate();
-
+        request.validateBusinessPolicyException();
         if(memberRepository.existsByUserId(request.getUserId())) {
             throw new IdAlreadyExistsException("이미 존재하는 아이디로 회원 가입할 수 없습니다.");
         }
@@ -45,7 +43,7 @@ public class MemberService {
         imageUtil.upload(imageFile, image.getFileName(), uploadDir);
         return savedMember;
     }
-    
+
     public void validateDuplicateId(String userId) {
         if(memberRepository.existsByUserId(userId)) {
             throw new IdAlreadyExistsException("이미 존재하는 아이디입니다.");

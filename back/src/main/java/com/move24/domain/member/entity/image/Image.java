@@ -1,7 +1,7 @@
 package com.move24.domain.member.entity.image;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.move24.domain.member.exception.FileNotFoundException;
+import com.move24.domain.member.exception.ImageFileNotFoundException;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -41,6 +41,19 @@ public class Image {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
     private LocalDateTime createdDate;
 
+    private String extractExtension(String originalName) {
+        return Objects.requireNonNull(originalName)
+                .substring(originalName.lastIndexOf(".") + 1);
+    }
+
+    private void isValidFile(MultipartFile imageFile) {
+        Optional.ofNullable(imageFile).orElseThrow(() -> new ImageFileNotFoundException("이미지 파일을 필수로 첨부하여야 합니다.", "file"));
+    }
+
+    public static Image create(MultipartFile imageFile) {
+        return new Image(imageFile);
+    }
+
     @Builder
     private Image(MultipartFile imageFile) {
         isValidFile(imageFile);
@@ -54,18 +67,5 @@ public class Image {
         this.size = imageFile.getSize();
         this.status = POSTED;
         this.createdDate = LocalDateTime.now();
-    }
-
-    private String extractExtension(String originalName) {
-        return Objects.requireNonNull(originalName)
-                .substring(originalName.lastIndexOf(".") + 1);
-    }
-
-    private void isValidFile(MultipartFile imageFile) {
-        Optional.ofNullable(imageFile).orElseThrow(() -> new FileNotFoundException("파일이 업로드되지 않았습니다."));
-    }
-
-    public static Image create(MultipartFile imageFile) {
-        return new Image(imageFile);
     }
 }

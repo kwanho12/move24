@@ -21,7 +21,7 @@ public class MemberController {
 
     @PostMapping("/api/members/new")
     public void join(@RequestPart(name = "request") @Validated MemberJoinRequest request,
-                     @RequestPart(name = "file") MultipartFile file) {
+                     @RequestPart(name = "file", required = false) MultipartFile file) {
         memberService.signup(request.toServiceRequest(), file);
     }
 

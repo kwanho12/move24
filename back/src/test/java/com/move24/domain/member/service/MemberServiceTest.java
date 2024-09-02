@@ -9,6 +9,7 @@ import com.move24.domain.member.entity.member.Member;
 import com.move24.domain.member.entity.member.MemberDetails;
 import com.move24.domain.member.entity.member.Role;
 import com.move24.domain.member.exception.IdAlreadyExistsException;
+import com.move24.domain.member.exception.ImageFileNotFoundException;
 import com.move24.domain.member.repository.ImageRepository;
 import com.move24.domain.member.repository.MemberRepository;
 import org.junit.jupiter.api.DisplayName;
@@ -108,7 +109,7 @@ class MemberServiceTest extends IntegrationTestSupport {
 
     @DisplayName("이미 존재하는 아이디를 입력하고 중복 체크하면 예외가 발생한다.")
     @Test
-    void CheckDuplicatesWithAlreadyExistingID() {
+    void validateDuplicateId() {
         // given
         Member member = createMember("skdltm12");
         memberRepository.save(member);
@@ -121,7 +122,7 @@ class MemberServiceTest extends IntegrationTestSupport {
 
     @DisplayName("회원가입 시 ID는 6~15글자의 영문 소문자와 숫자만 입력 가능한다.")
     @Test
-    void validationSuccessWithUserId1() {
+    void signupWithCorrectId1() {
         // given
         MemberJoinServiceRequest request = createJoinRequest(
                 "skdltm",
@@ -164,7 +165,7 @@ class MemberServiceTest extends IntegrationTestSupport {
 
     @DisplayName("회원가입 시 ID는 6~15글자의 영문 소문자와 숫자만 입력 가능한다.")
     @Test
-    void validationSuccessWithUserId2() {
+    void signupWithCorrectId2() {
         // given
         MemberJoinServiceRequest request = createJoinRequest(
                 "skdltmskdltmskd",
@@ -207,7 +208,7 @@ class MemberServiceTest extends IntegrationTestSupport {
 
     @DisplayName("회원가입 시 ID는 6~15글자의 영문 소문자와 숫자만 입력 가능한다.")
     @Test
-    void validationFailWithUserId1() {
+    void signupWithWrongId1() {
         // given
         MemberJoinServiceRequest request = createJoinRequest(
                 "Skdltm12",
@@ -229,7 +230,7 @@ class MemberServiceTest extends IntegrationTestSupport {
 
     @DisplayName("회원가입 시 ID는 6~15글자의 영문 소문자와 숫자만 입력 가능한다.")
     @Test
-    void validationFailWithUserId2() {
+    void signupWithWrongId2() {
         // given
         MemberJoinServiceRequest request = createJoinRequest(
                 "skdlt",
@@ -251,7 +252,7 @@ class MemberServiceTest extends IntegrationTestSupport {
 
     @DisplayName("회원가입 시 ID는 6~15글자의 영문 소문자와 숫자만 입력 가능한다.")
     @Test
-    void validationFailWithUserId3() {
+    void signupWithWrongId3() {
         // given
         MemberJoinServiceRequest request = createJoinRequest(
                 "skdltmskdltm1234",
@@ -273,7 +274,7 @@ class MemberServiceTest extends IntegrationTestSupport {
 
     @DisplayName("회원가입 시 비밀번호는 6~15자로 영문, 숫자, 특수기호를 혼용해서 입력해야 한다.")
     @Test
-    void validationSuccessWithPassword1() {
+    void signupWithCorrectPassword1() {
         // given
         MemberJoinServiceRequest request = createJoinRequest(
                 "skdltm",
@@ -316,7 +317,7 @@ class MemberServiceTest extends IntegrationTestSupport {
 
     @DisplayName("회원가입 시 비밀번호는 6~15자로 영문, 숫자, 특수기호를 혼용해서 입력해야 한다.")
     @Test
-    void validationSuccessWithPassword2() {
+    void signupWithCorrectPassword2() {
         // given
         MemberJoinServiceRequest request = createJoinRequest(
                 "skdltm",
@@ -359,7 +360,7 @@ class MemberServiceTest extends IntegrationTestSupport {
 
     @DisplayName("회원가입 시 비밀번호는 6~15자로 영문, 숫자, 특수기호를 혼용해서 입력해야 한다.")
     @Test
-    void validationFailWithPassword1() {
+    void signupWithWrongPassword1() {
         // given
         MemberJoinServiceRequest request = createJoinRequest(
                 "skdltm12",
@@ -381,7 +382,7 @@ class MemberServiceTest extends IntegrationTestSupport {
 
     @DisplayName("회원가입 시 비밀번호는 6~15자로 영문, 숫자, 특수기호를 혼용해서 입력해야 한다.")
     @Test
-    void validationFailWithPassword2() {
+    void signupWithWrongPassword2() {
         // given
         MemberJoinServiceRequest request = createJoinRequest(
                 "skdltm12",
@@ -403,7 +404,7 @@ class MemberServiceTest extends IntegrationTestSupport {
 
     @DisplayName("회원가입 시 비밀번호는 6~15자로 영문, 숫자, 특수기호를 혼용해서 입력해야 한다.")
     @Test
-    void validationFailWithPassword3() {
+    void signupWithWrongPassword3() {
         // given
         MemberJoinServiceRequest request = createJoinRequest(
                 "skdltm12",
@@ -425,7 +426,7 @@ class MemberServiceTest extends IntegrationTestSupport {
 
     @DisplayName("회원가입 시 올바른 이메일 형식을 입력해야 한다.")
     @Test
-    void validationFailWithEmail1() {
+    void signupWithWrongEmail1() {
         // given
         MemberJoinServiceRequest request = createJoinRequest(
                 "skdltm12",
@@ -447,7 +448,7 @@ class MemberServiceTest extends IntegrationTestSupport {
 
     @DisplayName("회원가입 시 올바른 이메일 형식을 입력해야 한다.")
     @Test
-    void validationFailWithEmail2() {
+    void signupWithWrongEmail2() {
         // given
         MemberJoinServiceRequest request = createJoinRequest(
                 "skdltm12",
@@ -469,7 +470,7 @@ class MemberServiceTest extends IntegrationTestSupport {
 
     @DisplayName("회원가입 시 올바른 이메일 형식을 입력해야 한다.")
     @Test
-    void validationFailWithEmail3() {
+    void signupWithWrongEmail3() {
         // given
         MemberJoinServiceRequest request = createJoinRequest(
                 "skdltm12",
@@ -491,7 +492,7 @@ class MemberServiceTest extends IntegrationTestSupport {
 
     @DisplayName("회원가입 시 올바른 휴대폰 번호 형식을 입력해야 한다.")
     @Test
-    void validationFailWithPhoneNumber1() {
+    void signupWithWrongPhoneNumber1() {
         // given
         MemberJoinServiceRequest request = createJoinRequest(
                 "skdltm12",
@@ -513,7 +514,7 @@ class MemberServiceTest extends IntegrationTestSupport {
 
     @DisplayName("회원가입 시 올바른 휴대폰 번호 형식을 입력해야 한다.")
     @Test
-    void validationFailWithPhoneNumber2() {
+    void signupWithWrongPhoneNumber2() {
         // given
         MemberJoinServiceRequest request = createJoinRequest(
                 "skdltm12",
@@ -535,7 +536,7 @@ class MemberServiceTest extends IntegrationTestSupport {
 
     @DisplayName("회원가입 시 이름은 2~15자로 입력해야 한다.")
     @Test
-    void validationSuccessWithName1() {
+    void signupWithCorrectName1() {
         // given
         MemberJoinServiceRequest request = createJoinRequest(
                 "skdltm12",
@@ -578,7 +579,7 @@ class MemberServiceTest extends IntegrationTestSupport {
 
     @DisplayName("회원가입 시 이름은 2~15자로 입력해야 한다.")
     @Test
-    void validationSuccessWithName2() {
+    void signupWithCorrectName2() {
         // given
         MemberJoinServiceRequest request = createJoinRequest(
                 "skdltm12",
@@ -621,7 +622,7 @@ class MemberServiceTest extends IntegrationTestSupport {
 
     @DisplayName("회원가입 시 이름은 2~15자로 입력해야 한다.")
     @Test
-    void validationFailWithName1() {
+    void signupWithWrongName1() {
         // given
         MemberJoinServiceRequest request = createJoinRequest(
                 "skdltm12",
@@ -643,7 +644,7 @@ class MemberServiceTest extends IntegrationTestSupport {
 
     @DisplayName("회원가입 시 이름은 2~15자로 입력해야 한다.")
     @Test
-    void validationFailWithName2() {
+    void signupWithWrongName2() {
         // given
         MemberJoinServiceRequest request = createJoinRequest(
                 "skdltm12",
@@ -665,7 +666,7 @@ class MemberServiceTest extends IntegrationTestSupport {
 
     @DisplayName("회원가입 시 주소는 5~200자로 입력해야 한다.")
     @Test
-    void validationSuccessWithAddress1() {
+    void signupWithCorrectAddress1() {
         // given
         MemberJoinServiceRequest request = createJoinRequest(
                 "skdltm12",
@@ -708,7 +709,7 @@ class MemberServiceTest extends IntegrationTestSupport {
 
     @DisplayName("회원가입 시 주소는 5~200자로 입력해야 한다.")
     @Test
-    void validationSuccessWithAddress2() {
+    void signupWithCorrectAddress2() {
         // given
         MemberJoinServiceRequest request = createJoinRequest(
                 "skdltm12",
@@ -757,7 +758,7 @@ class MemberServiceTest extends IntegrationTestSupport {
 
     @DisplayName("회원가입 시 주소는 5~200자로 입력해야 한다.")
     @Test
-    void validationFailWithAddress1() {
+    void signupWithWrongAddress1() {
         // given
         MemberJoinServiceRequest request = createJoinRequest(
                 "skdltm12",
@@ -779,7 +780,7 @@ class MemberServiceTest extends IntegrationTestSupport {
 
     @DisplayName("회원가입 시 주소는 5~200자로 입력해야 한다.")
     @Test
-    void validationFailWithAddress2() {
+    void signupWithWrongAddress2() {
         // given
         MemberJoinServiceRequest request = createJoinRequest(
                 "skdltm12",
@@ -802,6 +803,29 @@ class MemberServiceTest extends IntegrationTestSupport {
                 .hasMessage("주소는 5~200자 입력 가능합니다.");
     }
 
+    @DisplayName("회원가입 시 이미지 파일을 필수로 첨부해야 한다.")
+    @Test
+    void signupWithoutImageFile() {
+        // given
+        MemberJoinServiceRequest request = createJoinRequest(
+                "skdltm12",
+                "rkskek12#",
+                "김천재",
+                "FEMALE",
+                "testMember@naver.com",
+                "서울시 양산길 21 107호",
+                "010-2222-2222",
+                "ROLE_USER"
+        );
+
+        doNothing().when(imageUtil).upload(any(MultipartFile.class), any(String.class), any(String.class));
+        MultipartFile imageFile = null;
+
+        // when, then
+        assertThatThrownBy(() -> memberService.signup(request, imageFile))
+                .isInstanceOf(ImageFileNotFoundException.class)
+                .hasMessage("이미지 파일을 필수로 첨부하여야 합니다.");
+    }
 
     private MemberJoinServiceRequest createJoinRequest(String userId, String password, String name,
                                                        String gender, String email, String address,

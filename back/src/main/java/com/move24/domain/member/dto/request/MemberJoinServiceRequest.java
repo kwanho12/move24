@@ -1,7 +1,5 @@
 package com.move24.domain.member.dto.request;
 
-import com.move24.common.exception.BusinessPolicyValidErrorResponse;
-import com.move24.common.exception.BusinessPolicyValidationException;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -31,25 +29,12 @@ public class MemberJoinServiceRequest {
         this.role = role;
     }
 
-    public void validate() {
-        validate("userId", validateUserId(userId));
-        validate("password", validatePassword(password));
-        validate("name", validateName(name));
-        validate("email", validateEmail(mail));
-        validate("address", validateAddress(address));
-        validate("phoneNumber", validatePhoneNumber(phoneNumber));
-    }
-
-    private void validate(String field, String message) {
-        if (message != null) {
-            BusinessPolicyValidErrorResponse businessPolicyValidErrorResponse =
-                    BusinessPolicyValidErrorResponse.builder()
-                    .field(field)
-                    .message(message)
-                    .build();
-            throw new BusinessPolicyValidationException(
-                    businessPolicyValidErrorResponse.getMessage(), businessPolicyValidErrorResponse
-            );
-        }
+    public void validateBusinessPolicyException() {
+        validateRegEx("userId", userId, USER_ID_PATTERN, "ID는 6~15글자의 영문 소문자와 숫자만 입력 가능합니다.");
+        validateRegEx("password", password, PASSWORD_PATTERN, "비밀번호는 6~15자로 영문, 숫자, 특수기호를 혼용해서 입력해 주세요.");
+        validateName("name", name, "이름은 2~15자 입력 가능합니다.");
+        validateRegEx("email", mail, EMAIL_PATTERN, "이메일 형식이 올바르지 않습니다.");
+        validateAddress("address", address, "주소는 5~200자 입력 가능합니다.");
+        validateRegEx("phoneNumber", phoneNumber, PHONE_NUMBER_PATTERN, "휴대폰 번호의 형식이 올바르지 않습니다.");
     }
 }
