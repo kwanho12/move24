@@ -2,9 +2,9 @@ package com.move24.domain.driver.entity;
 
 import com.move24.common.entity.DateEntity;
 import com.move24.domain.driver.dto.request.DriverPostServiceRequest;
-import com.move24.domain.driver.exception.RoleNotValidException;
 import com.move24.domain.member.entity.member.Member;
 import com.move24.domain.member.entity.member.Role;
+import com.move24.domain.member.exception.RoleNotValidException;
 import com.move24.domain.review.entity.Review;
 import jakarta.persistence.*;
 import lombok.AccessLevel;

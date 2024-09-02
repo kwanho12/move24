@@ -1,9 +1,12 @@
 package com.move24.common.utils;
 
 import com.move24.common.exception.BusinessPolicyValidationException;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 
 import java.util.regex.Pattern;
 
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ValidationUtil {
 
     public static final Pattern USER_ID_PATTERN = Pattern.compile("^[a-z0-9]{6,15}$");

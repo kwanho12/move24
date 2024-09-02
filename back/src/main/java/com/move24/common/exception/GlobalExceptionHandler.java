@@ -1,6 +1,7 @@
 package com.move24.common.exception;
 
 import com.move24.common.response.ApiResponse;
+import com.move24.common.response.BusinessPolicyValidErrorResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindException;
 import org.springframework.validation.FieldError;

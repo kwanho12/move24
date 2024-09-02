@@ -2,12 +2,14 @@ package com.move24.domain.driver.service;
 
 import com.move24.domain.driver.dto.request.DriverPostServiceRequest;
 import com.move24.domain.driver.dto.request.DriverSearchServiceCondition;
+import com.move24.domain.driver.dto.request.UpdateDriverServiceRequest;
 import com.move24.domain.driver.dto.response.DriverOneResponse;
 import com.move24.domain.driver.dto.response.DriversResponse;
 import com.move24.domain.driver.entity.Driver;
 import com.move24.domain.driver.exception.DriverNotFoundException;
 import com.move24.domain.driver.repository.DriverRepository;
 import com.move24.domain.member.entity.member.Member;
+import com.move24.domain.member.exception.MemberNotFoundException;
 import com.move24.domain.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -63,16 +65,16 @@ public class DriverService {
         return new PageImpl<>(content, pageable, pageResponse.getTotalElements());
     }
 
-    /// 수정
-//    public void updateDriver(UpdateDriverPostServiceRequest request) {
-//
-//        Member member = memberRepository.findByUserId(driverId)
-//                .orElseThrow(() -> new DriverNotFoundException("회원이 존재하지 않습니다."));
-//
-//        Driver driver = driverRepository.findByMember(member)
-//                .orElseThrow(() -> new DriverNotFoundException("존재하지 않는 기사입니다."));
-//
-//        driver.update();
-//
-//    }
+    @Transactional
+    public void update(UpdateDriverServiceRequest request) {
+        request.validateBusinessPolicyException();
+
+        Member member = memberRepository.findByUserId(request.getDriverId())
+                .orElseThrow(() -> new MemberNotFoundException("회원이 존재하지 않습니다."));
+
+        Driver driver = driverRepository.findByMember(member)
+                .orElseThrow(() -> new DriverNotFoundException("기사 게시글이 존재하지 않습니다."));
+
+        driver.update(request.getExperienceYear(), request.getContent());
+    }
 }

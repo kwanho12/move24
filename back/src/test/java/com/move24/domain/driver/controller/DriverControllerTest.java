@@ -16,7 +16,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 class DriverControllerTest extends ControllerTestSupport {
 
-    @DisplayName("기사 게시물을 등록한다.")
+    @DisplayName("기사 게시글을 등록한다.")
     @Test
     void postDriver() throws Exception {
         // given
@@ -34,7 +34,7 @@ class DriverControllerTest extends ControllerTestSupport {
                 .andExpect(status().isOk());
     }
 
-    @DisplayName("기사 게시물을 등록할 때 경력 연차는 필수로 숫자로 입력해야 한다.")
+    @DisplayName("기사 게시글을 등록할 때 경력 연차는 필수로 숫자로 입력해야 한다.")
     @Test
     void postWithoutExperienceYear() throws Exception {
         // given
@@ -54,7 +54,7 @@ class DriverControllerTest extends ControllerTestSupport {
                 .andExpect(jsonPath("$.responseData.experienceYear").value("경력 연차는 필수로 숫자로 입력해야 합니다."));
     }
 
-    @DisplayName("기사 게시물을 등록할 때 내용은 필수로 숫자로 입력해야 한다.")
+    @DisplayName("기사 게시글을 등록할 때 내용은 필수로 숫자로 입력해야 한다.")
     @Test
     void postDriverWithoutContent() throws Exception {
         // given
@@ -74,7 +74,7 @@ class DriverControllerTest extends ControllerTestSupport {
                 .andExpect(jsonPath("$.responseData.content").value("내용은 필수로 입력해야 합니다."));
     }
 
-    @DisplayName("기사 게시물을 성별에 대해서 검색할 때 올바르게 입력해야 한다.")
+    @DisplayName("기사 게시글을 성별에 대해서 검색할 때 올바르게 입력해야 한다.")
     @Test
     void getDriversWithCorrectGender1() throws Exception {
         // given
@@ -89,7 +89,7 @@ class DriverControllerTest extends ControllerTestSupport {
                 .andExpect(status().isOk());
     }
 
-    @DisplayName("기사 게시물을 성별에 대해서 검색할 때 올바르게 입력해야 한다.")
+    @DisplayName("기사 게시글을 성별에 대해서 검색할 때 올바르게 입력해야 한다.")
     @Test
     void getDriversWithCorrectGender2() throws Exception {
         // given
@@ -104,9 +104,9 @@ class DriverControllerTest extends ControllerTestSupport {
                 .andExpect(status().isOk());
     }
 
-    @DisplayName("기사 게시물을 성별에 대해서 검색할 때 올바르게 입력해야 한다.")
+    @DisplayName("기사 게시글을 성별에 대해서 검색할 때 올바르게 입력해야 한다.")
     @Test
-    void getDriversWithWrongGender1() throws Exception {
+    void getDriversWithWrongGender() throws Exception {
         // given
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         params.add("gender", "남자");

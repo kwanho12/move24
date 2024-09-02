@@ -1,5 +1,6 @@
 package com.move24.common.exception;
 
+import com.move24.common.response.BusinessPolicyValidErrorResponse;
 import lombok.Getter;
 
 @Getter

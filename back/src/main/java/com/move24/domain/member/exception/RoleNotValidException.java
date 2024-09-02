@@ -1,4 +1,4 @@
-package com.move24.domain.driver.exception;
+package com.move24.domain.member.exception;
 
 import com.move24.common.exception.CommonException;
 

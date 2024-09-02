@@ -1,4 +1,4 @@
-package com.move24.common.exception;
+package com.move24.common.response;
 
 import lombok.Builder;
 import lombok.Getter;

@@ -9,4 +9,5 @@ import java.util.Optional;
 public interface DriverRepository extends JpaRepository<Driver, String>, DriverRepositoryCustom {
 
     Optional<Driver> findByMember(Member member);
+
 }
